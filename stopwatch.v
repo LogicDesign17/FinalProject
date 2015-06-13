@@ -49,6 +49,7 @@ module stopwatch(
 			sw_out[I] = sw_out_w[I];
 		end
 	end
+	
 	assign norm = norm_r;
 	
 	// initialize
@@ -65,7 +66,7 @@ module stopwatch(
 		norm_r = 1;
 	end
 	
-	// Mark control
+	// mark
 	always @(negedge clk) begin
 		if(enter & !enter_mark) begin
 			enter_mark = 1;
@@ -77,6 +78,7 @@ module stopwatch(
 		else if(!esc) esc_mark = 0;
 	end
 	
+	// Stopwatch
 	always @(posedge clk) begin
 		if(mode) begin
 			//start | stop
