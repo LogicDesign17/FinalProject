@@ -131,7 +131,7 @@ module watch(
 		.clk(clk),
 		.mode(mode[3]),
 		
-		.sw_out(out_w[3]),
+		.out(out_w[3]),
 		.norm(norm[3])
 		);
 		

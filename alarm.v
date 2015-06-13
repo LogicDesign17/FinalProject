@@ -31,6 +31,7 @@ module alarm(
     input [6:0] min,
     input [6:0] sec,
     output [47:0] out,
+	output alarm,
     output reg norm
     );
 
