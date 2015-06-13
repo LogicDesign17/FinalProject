@@ -56,21 +56,11 @@ module watch(
 	always @(posedge up or posedge down) begin
 		if (mode & norm) begin
 			if (up) begin
-				mode[1] <= mode[0];
-				mode[2] <= mode[1];
-				mode[3] <= mode[2];
-				mode[4] <= mode[3];
-				mode[5] <= mode[4];
-				mode[6] <= mode[5];
+				mode[6:1] <= mode[5:0];
 				mode[0] <= mode[6];
 			end
 			else if (down) begin
-				mode[0] <= mode[1];
-				mode[1] <= mode[2];
-				mode[2] <= mode[3];
-				mode[3] <= mode[4];
-				mode[4] <= mode[5];
-				mode[5] <= mode[6];
+				mode[5:0] <= mode[6:1];
 				mode[6] <= mode[0];
 			end
 		end

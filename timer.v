@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    00:14:15 06/14/2015 
+// Create Date:    00:18:34 06/14/2015 
 // Design Name: 
-// Module Name:    day_of_month 
+// Module Name:    timer 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,24 +18,19 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module day_of_month(
-	year,
-	month,
-	num
-	);
-	
-	input year,month;
-	output num;
-	reg [4:0] num;
-	
-	always @(year or month) begin
-		case(month)
-			1, 3, 5, 7, 8, 10, 12: num = 31;
-			4, 6, 9, 11: num = 30;
-			2: begin
-				if(year & 3 == 0) num = 29;
-				else num = 28;
-			end
-		endcase
-	end
+module timer(
+		input up,
+		input down,
+		input left,
+		input right,
+		input enter,
+		input esc,
+		input clk,
+		input mode,
+		output [47:0] out,
+		output norm,
+		output alarm
+		);
+
+
 endmodule
