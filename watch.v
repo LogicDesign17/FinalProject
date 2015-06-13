@@ -27,7 +27,7 @@ module watch(
 	input esc_i,
 	input clk,
 	output reg [7:0] o_m,
-	output reg [7:0] out [0:5],
+	output reg [7:0] out [7][6],
 	output reg alarm
 	);
 	
@@ -36,7 +36,7 @@ module watch(
 	reg up_mark, down_mark;
 	
 	wire [6:0] norm;
-	wire [7:0] out_w [0:6][0:5], o_m_w;
+	wire [7:0] out_w [7][6], o_m_w;
 	wire [6:0] year, month, day, hour, min, sec;
 	wire [6:0] alarm_w;
 	
@@ -124,7 +124,7 @@ module watch(
 		.clk(clk),
 		.mode(mode[3]),
 		
-		.out(out_w[3]),
+		.sw_out(out_w[3]),
 		.norm(norm[3])
 		);
 		
