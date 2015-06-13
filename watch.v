@@ -38,6 +38,7 @@ module watch(
 	wire [6:0] norm;
 	wire [47:0] out_w [0:6], o_m_w;
 	wire [6:0] year, month, day, hour, min, sec;
+	wire carry;
 	wire [6:0] alarm_w;
 	
 	always @(negedge clk) begin
@@ -85,6 +86,7 @@ module watch(
 		.esc(esc),
 		.clk(clk),
 		.mode(mode[0]),
+		.carry_in(carry),
 		
 		.out(out_w[0]),
 		.norm(norm[0]),
@@ -107,7 +109,8 @@ module watch(
 		.norm(norm[1]),
 		.hour(hour),
 		.min(min),
-		.sec(sec)
+		.sec(sec),
+		.carry_out(carry)
 		);
 	
 	alarm alarm_m(
