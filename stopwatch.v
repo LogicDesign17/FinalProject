@@ -32,28 +32,34 @@ module stopwatch(
     );
 
 	// Base registers
-	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark, norm_r;
-	reg [7:0] out [0:5];
+	reg enter_mark, esc_mark, norm_r;
+	reg [7:0] out_a [0:5];
 	
 	// Stopwatch registers
-	reg [3:0] sw_out [0:5];
+	reg [4:0] sw_out [0:5];
 	reg [13:0] sw_count;
 	reg [6:0] sw_min, sw_sec1, sw_sec0;
 	reg sw_pause;
 	wire [3:0] sw_out_w [0:5];
-	assign sw_out_w = sw_out, norm = norm_r;
+	
+	integer I;
+	
+	always @(posedge clk) begin
+		for(I=0;I<6;I=I+1) begin
+			sw_out[I] = sw_out_w[I];
+		end
+	end
+	assign norm = norm_r;
 	
 	// initialize
 	initial begin
+		sw_out[4][4] = 1;
+		sw_out[4][2] = 1;
 		sw_pause = 1;
 		sw_min = 0;
 		sw_sec0 = 0;
 		sw_sec1 = 0;
-		norm = 1;
-		up_mark = 0;
-		down_mark = 0;
-		left_mark = 0;
-		right_mark = 0;
+		norm_r = 1;
 		enter_mark = 0;
 		esc_mark = 0;
 		norm_r = 1;
@@ -61,22 +67,6 @@ module stopwatch(
 	
 	// Mark control
 	always @(negedge clk) begin
-		if(up & !up_mark) begin
-			up_mark = 1;
-		end
-		else if(!up) up_mark = 0;
-		if(down & !down_mark) begin
-			down_mark = 1;
-		end
-		else if(!down) down_mark = 0;
-		if(left & !left_mark) begin
-			left_mark = 1;
-		end
-		else if(!left) left_mark = 0;
-		if(right & !right_mark) begin
-			right_mark = 1;
-		end
-		else if(!right) right_mark = 0;
 		if(enter & !enter_mark) begin
 			enter_mark = 1;
 		end
@@ -123,11 +113,6 @@ module stopwatch(
 			sw_min = 0;
 			sw_sec0 = 0;
 			sw_sec1 = 0;
-			norm = 1;
-			up_mark = 0;
-			down_mark = 0;
-			left_mark = 0;
-			right_mark = 0;
 			enter_mark = 0;
 			esc_mark = 0;
 		end
@@ -137,10 +122,13 @@ module stopwatch(
 	digit_split sw_sec1_split(.in(sw_sec1), .out1(sw_out_w[3]), .out0(sw_out_w[2]));
 	digit_split sw_sec0_split(.in(sw_sec0), .out1(sw_out_w[1]), .out0(sw_out_w[0]));
 
-	bcd2seven sw_out_m [5:0] (.in(sw_out),.out(out));
+	bcd2seven sw_out_m [5:0] (.in(sw_out),.out(out_a));
 	
-	output outtt[47:0];
+	assign out[7:0] = out_a[0];
+	assign out[15:8] = out_a[1];
+	assign out[23:16] = out_a[2];
+	assign out[31:24] = out_a[3];
+	assign out[39:32] = out_a[4];
+	assign out[47:40] = out_a[5];
 	
-	outtt[7:0] = out[0]
-
 endmodule
