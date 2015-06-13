@@ -77,7 +77,7 @@ module watch(
 	end
 	
 	date date_m(
-		.up(up[0]),
+		.up(up),
 		.down(down),
 		.left(left),
 		.right(right),
@@ -94,7 +94,7 @@ module watch(
 		);
 		
 	clock clock_m(
-		.up(up[1]),
+		.up(up),
 		.down(down),
 		.left(left),
 		.right(right),
