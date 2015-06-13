@@ -22,11 +22,11 @@ module blink(
 	input on,
 	input val,
 	input clk,
-	output out
+	output reg out
 	);
 
 	reg [18:0] count;
-	
+
 	initial begin
 		out = 0;
 		count = 0;
