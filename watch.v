@@ -27,7 +27,7 @@ module watch(
 	input esc_i,
 	input clk,
 	output reg [7:0] o_m,
-	output reg [7:0] out [7][6],
+	output reg [47:0] out,
 	output reg alarm
 	);
 	
@@ -36,7 +36,7 @@ module watch(
 	reg up_mark, down_mark;
 	
 	wire [6:0] norm;
-	wire [7:0] out_w [7][6], o_m_w;
+	wire [7:0] out_w [0:6][0:5], o_m_w;
 	wire [6:0] year, month, day, hour, min, sec;
 	wire [6:0] alarm_w;
 	
@@ -49,15 +49,29 @@ module watch(
 		esc = ~esc_i;
 	end
 	
+	initial begin
+		mode = 1;
+	end
+	
 	always @(posedge up or posedge down) begin
 		if (mode & norm) begin
 			if (up) begin
-				if (mode == 6) mode = 0;
-				else mode = mode + 1;
+				mode[1] <= mode[0];
+				mode[2] <= mode[1];
+				mode[3] <= mode[2];
+				mode[4] <= mode[3];
+				mode[5] <= mode[4];
+				mode[6] <= mode[5];
+				mode[0] <= mode[6];
 			end
 			else if (down) begin
-				if (mode == 0) mode = 6;
-				else mode = mode - 1;
+				mode[0] <= mode[1];
+				mode[1] <= mode[2];
+				mode[2] <= mode[3];
+				mode[3] <= mode[4];
+				mode[4] <= mode[5];
+				mode[5] <= mode[6];
+				mode[6] <= mode[0];
 			end
 		end
 	end

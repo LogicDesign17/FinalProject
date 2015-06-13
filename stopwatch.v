@@ -26,21 +26,21 @@ module stopwatch(
 	input enter,
 	input esc,
 	input clk,
-	output [7:0] out [6],
+	input mode,
+	output [7:0] out [0:5],
 	output norm
     );
 
 	// Input registers
-	reg up, down, left, right, enter, esc;
-	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark;
+	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark, norm_r;
 	
 	// Stopwatch registers
-	reg [3:0] sw_out [6];
+	reg [3:0] sw_out [0:5];
 	reg [13:0] sw_count;
 	reg [6:0] sw_min, sw_sec1, sw_sec0;
 	reg sw_pause;
-	wire [3:0] sw_out_w [6];
-	assign sw_out_w = sw_out;
+	wire [3:0] sw_out_w [0:5];
+	assign sw_out_w = sw_out, norm = norm_r;
 	
 	// initialize
 	initial begin
@@ -55,7 +55,7 @@ module stopwatch(
 		right_mark = 0;
 		enter_mark = 0;
 		esc_mark = 0;
-		norm = 1;
+		norm_r = 1;
 	end
 	
 	// Mark control
@@ -136,6 +136,6 @@ module stopwatch(
 	digit_split sw_sec1_split(.in(sw_sec1), .out1(sw_out_w[3]), .out0(sw_out_w[2]));
 	digit_split sw_sec0_split(.in(sw_sec0), .out1(sw_out_w[1]), .out0(sw_out_w[0]));
 
-	bcd2seven sw_out_m [6] (.in(sw_out),.out(out));
+	bcd2seven sw_out_m [5:0] (.in(sw_out),.out(out));
 
 endmodule
