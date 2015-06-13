@@ -31,8 +31,9 @@ module watch(
 	output reg alarm
 	);
 	
-	reg [3:0] mode;
+	reg [6:0] mode;
 	reg up, down, left, right, enter, esc;
+	reg up_mark, down_mark;
 	
 	wire [6:0] norm;
 	wire [7:0] out_w [0:6][0:5], o_m_w;
@@ -47,16 +48,29 @@ module watch(
 		enter = ~enter_i;
 		esc = ~esc_i;
 	end
-		
+	
+	always @(posedge up or posedge down) begin
+		if (mode & norm) begin
+			if (up) begin
+				if (mode == 6) mode = 0;
+				else mode = mode + 1;
+			end
+			else if (down) begin
+				if (mode == 0) mode = 6;
+				else mode = mode - 1;
+			end
+		end
+	end
 	
 	date date_m(
-		.up(up),
+		.up(up[0]),
 		.down(down),
 		.left(left),
 		.right(right),
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[0]),
 		
 		.out(out_w[0]),
 		.norm(norm[0]),
@@ -66,13 +80,14 @@ module watch(
 		);
 		
 	clock clock_m(
-		.up(up),
+		.up(up[1]),
 		.down(down),
 		.left(left),
 		.right(right),
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[1]),
 		
 		.out(out_w[1]),
 		.norm(norm[1]),
@@ -89,6 +104,7 @@ module watch(
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[2]),
 		
 		.out(out_w[2]),
 		.alarm(alarm_w[2]),
@@ -106,6 +122,7 @@ module watch(
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[3]),
 		
 		.out(out_w[3]),
 		.norm(norm[3])
@@ -119,6 +136,7 @@ module watch(
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[4]),
 		
 		.out(out_w[4]),
 		.norm(norm[4]),
@@ -136,6 +154,7 @@ module watch(
 		.month(month),
 		.day(day),
 		.clk(clk),
+		.mode(mode[5]),
 		
 		.out(out_w[5]),
 		.norm(norm[5])
@@ -149,6 +168,7 @@ module watch(
 		.enter(enter),
 		.esc(esc),
 		.clk(clk),
+		.mode(mode[6]),
 		
 		.out(out_w[6]),
 		.norm(norm[6])

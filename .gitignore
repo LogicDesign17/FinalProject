@@ -8,7 +8,7 @@
 *.xrpt
 iseconfig/
 _xmsgs/
-
+notepad++/session.xml
 
 #################
 ## Eclipse
