@@ -19,21 +19,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module date(
-    input up,
-    input down,
-    input left,
-    input right,
-    input enter,
-    input esc,
-    input clk,
+	input up,
+	input down,
+	input left,
+	input right,
+	input enter,
+	input esc,
+	input clk,
 	input mode,
 	input carry_in,
-    output [47:0] out,
-    output reg norm,
-    output [6:0] year,
-    output [6:0] month,
-    output [6:0] day
-    );
+	output [47:0] out,
+	output reg norm,
+	output [6:0] year,
+	output [6:0] month,
+	output [6:0] day
+);
 
 
 endmodule

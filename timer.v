@@ -35,6 +35,13 @@ module timer(
 	// Base registers
 	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark, norm_r;
 	reg [7:0] out_a [0:5];
+	wire [7:0] out_a_w [0:5];
+	assign out_a_w[0] = out_a[0];
+	assign out_a_w[1] = out_a[1];
+	assign out_a_w[2] = out_a[2];
+	assign out_a_w[3] = out_a[3];
+	assign out_a_w[4] = out_a[4];
+	assign out_a_w[5] = out_a[5];
 	
 	// Timer registers
 	reg [4:0] tm_out [0:5];
@@ -44,7 +51,14 @@ module timer(
 	reg tm_flow;
 	wire [3:0] tm_out_w [0:5];
 	reg [5:0] blink_on;
+	wire [7:0] blink_out_w [0:5];
 	reg [7:0] blink_out [0:5];
+	assign blink_out_w[0] = blink_out[0];
+	assign blink_out_w[1] = blink_out[1];
+	assign blink_out_w[2] = blink_out[2];
+	assign blink_out_w[3] = blink_out[3];
+	assign blink_out_w[4] = blink_out[4];
+	assign blink_out_w[5] = blink_out[5];
 	
 	integer I;
 	
@@ -58,8 +72,6 @@ module timer(
 	
 	// initialize
 	initial begin
-		blink_out[2][7] = 1;
-		blink_out[4][7] = 1;
 		tm_count = 0;
 		tm_hour = 0;
 		tm_min = 0;
@@ -110,12 +122,12 @@ module timer(
 		else if (tm_setting == 3) blink_on <= 6'b110000;
 	end
 	
-	blink tm_blink0 [7:0] (.on(blink_on[0]),.val(out_a[0]),.clk(clk),.out(blink_out[0]));
-	blink tm_blink1 [7:0] (.on(blink_on[1]),.val(out_a[1]),.clk(clk),.out(blink_out[1]));
-	blink tm_blink2 [6:0] (.on(blink_on[2]),.val(out_a[2]),.clk(clk),.out(blink_out[2]));
-	blink tm_blink3 [7:0] (.on(blink_on[3]),.val(out_a[3]),.clk(clk),.out(blink_out[3]));
-	blink tm_blink4 [6:0] (.on(blink_on[4]),.val(out_a[4]),.clk(clk),.out(blink_out[4]));
-	blink tm_blink5 [7:0] (.on(blink_on[5]),.val(out_a[5]),.clk(clk),.out(blink_out[5]));
+	blink tm_blink0 [7:0] (.on(blink_on[0]),.val(out_a[0]),.clk(clk),.out(blink_out_w[0]));
+	blink tm_blink1 [7:0] (.on(blink_on[1]),.val(out_a[1]),.clk(clk),.out(blink_out_w[1]));
+	blink tm_blink2 [7:0] (.on(blink_on[2]),.val(out_a[2]),.clk(clk),.out(blink_out_w[2]));
+	blink tm_blink3 [7:0] (.on(blink_on[3]),.val(out_a[3]),.clk(clk),.out(blink_out_w[3]));
+	blink tm_blink4 [7:0] (.on(blink_on[4]),.val(out_a[4]),.clk(clk),.out(blink_out_w[4]));
+	blink tm_blink5 [7:0] (.on(blink_on[5]),.val(out_a[5]),.clk(clk),.out(blink_out_w[5]));
 	
 	// Mode control (norm) Ãß°¡
 	always @(posedge clk) begin
@@ -222,13 +234,20 @@ module timer(
 	digit_split tm_min_split(.in(tm_min), .out1(tm_out_w[3]), .out0(tm_out_w[2]));
 	digit_split tm_sec_split(.in(tm_sec), .out1(tm_out_w[1]), .out0(tm_out_w[0]));
 	
-	bcd2seven tm_out_m [5:0] (.in(tm_out),.out(out_a));
+	bcd2seven tm_out_m0 (.in(tm_out[0]),.out(out_a_w[0]));
+	bcd2seven tm_out_m1 (.in(tm_out[1]),.out(out_a_w[1]));
+	bcd2seven tm_out_m2 (.in(tm_out[2]),.out(out_a_w[2]));
+	bcd2seven tm_out_m3 (.in(tm_out[3]),.out(out_a_w[3]));
+	bcd2seven tm_out_m4 (.in(tm_out[4]),.out(out_a_w[4]));
+	bcd2seven tm_out_m5 (.in(tm_out[5]),.out(out_a_w[5]));
 	
 	assign out[7:0] = blink_out[0];
 	assign out[15:8] = blink_out[1];
-	assign out[23:16] = blink_out[2];
+	assign out[22:16] = blink_out[2][6:0];
+	assign out[23] = 1;
 	assign out[31:24] = blink_out[3];
-	assign out[39:32] = blink_out[4];
-	assign out[47:40] = blink_out[5];	
+	assign out[38:32] = blink_out[4][6:0];
+	assign out[39] = 1;
+	assign out[47:40] = blink_out[5];
 
 endmodule
