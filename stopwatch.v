@@ -27,12 +27,13 @@ module stopwatch(
 	input esc,
 	input clk,
 	input mode,
-	output [7:0] out [0:5],
+	output [47:0] out,
 	output norm
     );
 
-	// Input registers
+	// Base registers
 	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark, norm_r;
+	reg [7:0] out [0:5];
 	
 	// Stopwatch registers
 	reg [3:0] sw_out [0:5];
@@ -137,5 +138,9 @@ module stopwatch(
 	digit_split sw_sec0_split(.in(sw_sec0), .out1(sw_out_w[1]), .out0(sw_out_w[0]));
 
 	bcd2seven sw_out_m [5:0] (.in(sw_out),.out(out));
+	
+	output outtt[47:0];
+	
+	outtt[7:0] = out[0]
 
 endmodule
