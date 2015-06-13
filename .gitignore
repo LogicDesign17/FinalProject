@@ -6,9 +6,12 @@
 *.prj
 *.xst
 *.xrpt
+*.ngc
+*.ngr
 iseconfig/
 _xmsgs/
 notepad++/session.xml
+
 
 #################
 ## Eclipse

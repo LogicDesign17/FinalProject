@@ -51,18 +51,20 @@ module watch(
 	end
 	
 	initial begin
-		mode = 1;
+		mode <= 6'b100000;
 	end
 	
-	always @(posedge up or posedge down) begin
+	always @(posedge clk) begin
 		if (mode & norm) begin
-			if (up) begin
-				mode[6:1] <= mode[5:0];
-				mode[0] <= mode[6];
+			if (!down) down_mark = 0;
+			if (!up) up_mark = 0;
+			if (up && !up_mark) begin
+				mode <= {mode[5:0], mode[6]};
+				up_mark = 1;
 			end
-			else if (down) begin
-				mode[5:0] <= mode[6:1];
-				mode[6] <= mode[0];
+			else if (down && !down_mark) begin
+				mode <= {mode[0], mode[6:1]};
+				down_mark = 1;
 			end
 		end
 	end
