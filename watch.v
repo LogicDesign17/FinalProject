@@ -32,7 +32,7 @@ module watch(
 	);
 	
 	reg [6:0] mode;
-	reg up, down, left, right, enter, esc;
+	reg up, down, left, right, enter, esc, tmp;
 	reg up_mark, down_mark;
 	
 	wire [6:0] norm;
@@ -54,18 +54,6 @@ module watch(
 		mode = 1;
 	end
 	
-	always @(posedge up or posedge down) begin
-		if (mode & norm) begin
-			if (up) begin
-				mode[6:1] <= mode[5:0];
-				mode[0] <= mode[6];
-			end
-			else if (down) begin
-				mode[5:0] <= mode[6:1];
-				mode[6] <= mode[0];
-			end
-		end
-	end
 	
 	date date_m(
 		.up(up),
