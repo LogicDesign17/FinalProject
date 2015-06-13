@@ -49,15 +49,29 @@ module watch(
 		esc = ~esc_i;
 	end
 	
+	initial begin
+		mode = 1;
+	end
+	
 	always @(posedge up or posedge down) begin
 		if (mode & norm) begin
 			if (up) begin
-				if (mode == 6) mode = 0;
-				else mode = mode + 1;
+				mode[1] <= mode[0];
+				mode[2] <= mode[1];
+				mode[3] <= mode[2];
+				mode[4] <= mode[3];
+				mode[5] <= mode[4];
+				mode[6] <= mode[5];
+				mode[0] <= mode[6];
 			end
 			else if (down) begin
-				if (mode == 0) mode = 6;
-				else mode = mode - 1;
+				mode[0] <= mode[1];
+				mode[1] <= mode[2];
+				mode[2] <= mode[3];
+				mode[3] <= mode[4];
+				mode[4] <= mode[5];
+				mode[5] <= mode[6];
+				mode[6] <= mode[0];
 			end
 		end
 	end
@@ -124,7 +138,7 @@ module watch(
 		.clk(clk),
 		.mode(mode[3]),
 		
-		.out(out_w[3]),
+		.sw_out(out_w[3]),
 		.norm(norm[3])
 		);
 		
