@@ -35,7 +35,7 @@ module watch(
 	reg up, down, left, right, enter, esc;
 	
 	wire [6:0] norm;
-	wire [7:0] out_w [0:5], o_m_w;
+	wire [7:0] out_w [0:6][0:5], o_m_w;
 	wire [6:0] year, month, day, hour, min, sec;
 	wire [6:0] alarm_w;
 	

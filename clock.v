@@ -26,7 +26,7 @@ module clock(
     input enter,
     input esc,
     input clk,
-    output [0:0] out,
+    output [7:0] out [0:5],
     output norm,
     output [6:0] year,
     output [6:0] month,

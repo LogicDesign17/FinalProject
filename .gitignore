@@ -2,7 +2,12 @@
 *.cmd_log
 *.syr
 *.bin
+*.lso
+*.prj
+*.xst
+*.xrpt
 iseconfig/
+_xmsgs/
 
 
 #################
