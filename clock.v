@@ -36,14 +36,18 @@ module clock(
     );
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
-	reg [5:0] blink;
+	reg [5:0] blk;
+	reg [47:0] blk_on;
 	reg [19:0] count;
+	wire [3:0] h1, h0, m1, m0, s1, s0;
+	wire [7:0] raw [5:0];
+	integer i, j;
 	
 	initial begin
 		up_f = 0; down_f = 0;
 		left_f = 0; right_f = 0;
 		enter_f = 0; esc_f = 0;
-		blink = 6'b000000;
+		blk = 6'b000000;
 		count = 0;
 		hour = 0; min = 0; sec = 0;
 	end
@@ -57,7 +61,7 @@ module clock(
 				if (enter && !enter_f) begin
 					enter_f = 1'b1;
 					norm = 0;
-					blink = 6'b110000;
+					blk = 6'b110000;
 				end
 				else if (!enter) enter_f = 1'b0;
 			end
@@ -67,30 +71,30 @@ module clock(
 				if (esc && !esc_f) begin
 					esc_f = 1'b1;
 					norm = 1;
-					blink = 6'b000000;
+					blk = 6'b000000;
 				end
 				else if (!esc) esc_f = 1'b0;
 				
 				// LEFT
 				if (left && !left_f) begin
 					left_f = 1'b1;
-					blink[5:2] <= blink[3:0];
-					blink[1:0] <= blink[5:4];
+					blk[5:2] <= blk[3:0];
+					blk[1:0] <= blk[5:4];
 				end
 				else if (!left) left_f = 1'b0;
 				
 				// Right
 				if (right && !right_f) begin
 					right_f = 1'b1;
-					blink[3:0] <= blink[5:2];
-					blink[5:4] <= blink[1:0];
+					blk[3:0] <= blk[5:2];
+					blk[5:4] <= blk[1:0];
 				end
 				else if (!right) right_f = 1'b0;
 				
 				// UP
 				if (up && !up_f) begin
 					up_f = 1'b1;
-					case (blink)
+					case (blk)
 						6'b110000: begin
 							if (hour == 23) hour = 0;
 							else hour = hour + 1;
@@ -110,7 +114,7 @@ module clock(
 				// DOWN
 				if (down && !down_f) begin
 					down_f = 1'b1;
-					case (blink)
+					case (blk)
 						6'b110000: begin
 							if (hour == 0) hour = 23;
 							else hour = hour - 1;
@@ -153,6 +157,24 @@ module clock(
 			end
 			else count = count + 1;
 		end
+		// Output formatting
+		for (i = 0; i < 6; i = i + 1) begin
+			for (j = 0; j < 8; j = j + 1) begin
+				blk_on[i*8 + j] = blk[i];
+			end
+		end
 	end
 
+	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
+	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
+	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
+	
+	bcd2seven bs_h1(.in(h1), .out(raw[5]));
+	bcd2seven bs_h0(.in(h0), .out(raw[4]));
+	bcd2seven bs_m1(.in(m1), .out(raw[3]));
+	bcd2seven bs_m0(.in(m0), .out(raw[2]));
+	bcd2seven bs_s1(.in(s1), .out(raw[1]));
+	bcd2seven bs_s0(.in(s0), .out(raw[0]));
+	
+	
 endmodule
