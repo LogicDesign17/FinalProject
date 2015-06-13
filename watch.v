@@ -54,8 +54,6 @@ module watch(
 		mode <= 6'b100000;
 	end
 	
-<<<<<<< HEAD
-=======
 	always @(posedge clk) begin
 		if (mode & norm) begin
 			if (!down) down_mark = 0;
@@ -70,7 +68,6 @@ module watch(
 			end
 		end
 	end
->>>>>>> origin/master
 	
 	date date_m(
 		.up(up),
@@ -185,5 +182,5 @@ module watch(
 		.out(out_w[6]),
 		.norm(norm[6])
 		);
-	
+		
 endmodule
