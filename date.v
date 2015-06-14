@@ -10,6 +10,7 @@ module date(
 	input mode,
 	input carry_in,
 	output [47:0] out,
+	output reg [5:0] blk,
 	output reg norm,
 	output reg [6:0] year,
 	output reg [6:0] month,
@@ -17,9 +18,7 @@ module date(
 );
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
-	reg [5:0] blk;
 	wire [29:0] bcd;
-	reg [47:0] blk_on;
 	wire [47:0] seven;
 	reg carry_f;
 	wire day_num;
@@ -135,19 +134,11 @@ module date(
 			end
 			else if (!carry_in) carry_f = 0;
 		end
-		
-		// Output formatting
-		for (i = 0; i < 6; i = i + 1) begin
-			for (j = 0; j < 8; j = j + 1) begin
-				blk_on[8*i+j] = blk[i];
-			end
-		end
 	end
 	
 	digit_split ds_h(.in(year), .out1(bcd[28:25]), .out0(bcd[23:20]));
 	digit_split ds_m(.in(month), .out1(bcd[18:15]), .out0(bcd[13:10]));
 	digit_split ds_s(.in(day), .out1(bcd[8:5]), .out0(bcd[3:0]));
 
-	bcd2seven bs[0:5] (.in(bcd), .out(seven));	
-	blink blinker[47:0] (.on(blk_on), .val(seven), .clk(clk), .out(out));	
+	bcd2seven bs[0:5] (.in(bcd), .out(out));	
 endmodule

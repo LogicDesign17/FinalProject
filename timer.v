@@ -9,21 +9,21 @@ module timer(
 	input clk,
 	input mode,
 	output [47:0] out,
+	output reg [5:0] blk,
 	output reg norm,
 	output alm
 	);
 	
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
-	reg [5:0] blk;
-	reg [47:0] blk_on;
 	reg [19:0] count;
 	reg active;
 	reg ring, ring_f;
 	reg [6:0] hour, min, sec;
 	reg [6:0] hour_s, min_s, sec_s; // saved value
 	wire [3:0] h1, h0, m1, m0, s1, s0;
-	wire [47:0] raw;
 	integer i, j;
+	
+	assign alm = ring;
 	
 	initial begin
 		up_f = 0; down_f = 0;
@@ -34,6 +34,7 @@ module timer(
 		hour = 0; min = 0; sec = 0;
 		hour_s = 0; min_s = 0; sec_s = 0;
 		norm = 1;
+		ring = 0;
 	end
 
 	always @(posedge clk) begin
@@ -174,26 +175,16 @@ module timer(
 			end
 			else count <= count + 1;
 		end
-		
-		// Output formatting
-		for (i = 0; i < 6; i = i + 1) begin
-			for (j = 0; j < 8; j = j + 1) begin
-				blk_on[8*i+j] = blk[i];
-			end
-		end
 	end
 
 	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
 	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
 	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
 	
-	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
-	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
-	bcd2seven bs_m1(.in({0, m1}), .out(raw[31:24]));
-	bcd2seven bs_m0(.in({0, m0}), .out(raw[23:16]));
-	bcd2seven bs_s1(.in({0, s1}), .out(raw[15:8]));
-	bcd2seven bs_s0(.in({0, s0}), .out(raw[7:0]));
-	
-	blink blinker[47:0] (.on(blk_on), .val(raw), .clk(clk), .out(out));
-	
+	bcd2seven bs_h1(.in({0, h1}), .out(out[47:40]));
+	bcd2seven bs_h0(.in({0, h0}), .out(out[39:32]));
+	bcd2seven bs_m1(.in({0, m1}), .out(out[31:24]));
+	bcd2seven bs_m0(.in({0, m0}), .out(out[23:16]));
+	bcd2seven bs_s1(.in({0, s1}), .out(out[15:8]));
+	bcd2seven bs_s0(.in({0, s0}), .out(out[7:0]));
 endmodule

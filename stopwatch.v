@@ -28,8 +28,10 @@ module stopwatch(
 	input clk,
 	input mode,
 	output [47:0] out,
+	output reg [5:0] blk = 6'b000000,
 	output norm
 	);
+	
 
 	// Base registers
 	reg enter_mark, esc_mark, norm_r;

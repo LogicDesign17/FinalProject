@@ -12,14 +12,13 @@ module d_day(
     input [6:0] month,
     input [6:0] day,
     output reg [47:0] out,
+	output reg [5:0] blk,
 	output alarm,
     output reg norm
     );
 
 	reg [6:0] d_y, d_m, d_d;
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
-	reg [5:0] blk;
-	reg [47:0] blk_on;
 	reg carry_f, sign;
 	reg [15:0] dif, d_num, c_num;
 	wire [29:0] set_bcd;
@@ -172,13 +171,6 @@ module d_day(
 			dif = d_num - c_num;
 			sign = 0;
 		end
-		
-		// Output formatting
-		for (i = 0; i < 6; i = i + 1) begin
-			for (j = 0; j < 8; j = j + 1) begin
-				blk_on[8*i+j] = blk[i];
-			end
-		end
 	end
 	
 	// Norm output
@@ -195,8 +187,7 @@ module d_day(
 	digit_split ds_m(.in(d_m), .out1(set_bcd[18:15]), .out0(set_bcd[13:10]));
 	digit_split ds_d(.in(d_d), .out1(set_bcd[8:5]), .out0(set_bcd[3:0]));
 
-	bcd2seven bs[0:5] (.in(set_bcd), .out(seven));	
-	blink blinker[0:47] (.on(blk_on), .val(seven), .clk(clk), .out(set_out));	
+	bcd2seven bs[0:5] (.in(set_bcd), .out(set_out));	
 
 endmodule
 

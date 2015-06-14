@@ -8,7 +8,7 @@ module watch(
 	input esc_i,
 	input clk,
 	output [7:0] out_m,
-	output reg [47:0] out,
+	output [47:0] out,
 	output reg alm
 	);
 
@@ -23,10 +23,15 @@ module watch(
 	wire [6:0] year, month, day, hour, min, sec;
 	wire carry;
 	wire [1:0] alm_w;
+	wire [5:0] blk[5:0];
 	
+	reg [5:0] blk_on;
+	reg [47:0] blk_val;
 	initial begin
 	//	$monitor("%t  norm: %b, mode_bcd: %b", $time, norm, mode_bcd);
 	end
+	
+	blink blinker(.on(blk_on), .val(blk_val), .out(out));
 	
 	always @(negedge clk) begin
 		up = ~up_i;
@@ -58,31 +63,38 @@ module watch(
 		case (mode)
 			6'b000001: begin
 				mode_bcd = 0;
-				out = out_w[0];
+				blk_val = out_w[0];
+				blk_on = blk[0];
 			end
 			6'b000010: begin
 				mode_bcd = 1;
-				out = out_w[1];
+				blk_val = out_w[1];
+				blk_on = blk[0];
 			end
 			6'b000100: begin
 				mode_bcd = 2;
-				out = out_w[2];
+				blk_val = out_w[2];
+				blk_on = blk[0];
 			end
 			6'b001000: begin
 				mode_bcd = 3;
-				out = out_w[3];
+				blk_val = out_w[3];
+				blk_on = blk[0];
 			end
 			6'b010000: begin
 				mode_bcd = 4;
-				out = out_w[4];
+				blk_val = out_w[4];
+				blk_on = blk[0];
 			end
 			6'b100000: begin
 				mode_bcd = 5;
-				out = out_w[5];
+				blk_val = out_w[5];
+				blk_on = blk[0];
 			end
 		endcase
 
-		alm = !(!alm_w);
+		if (alm_w) alm = 1;
+		else alm = 0;
 	end
 	
 	bcd2seven bs_mode(.in(mode_bcd), .out(out_m));
@@ -99,12 +111,13 @@ module watch(
 		.carry_in(carry),
 		
 		.out(out_w[0]),
+		.blk(blk[0]),
 		.norm(norm[0]),
 		.year(year),
 		.month(month),
 		.day(day)
 		);
-	
+
 	clock clock_m(
 		.up(up),
 		.down(down),
@@ -116,6 +129,7 @@ module watch(
 		.mode(mode[1]),
 		
 		.out(out_w[1]),
+		.blk(blk[1]),
 		.norm(norm[1]),
 		.hour(hour),
 		.min(min),
@@ -134,13 +148,14 @@ module watch(
 		.mode(mode[2]),
 		
 		.out(out_w[2]),
+		.blk(blk[2]),
 		.alm(alm_w[0]),
 		.norm(norm[2]),
 		.hour(hour),
 		.min(min),
 		.sec(sec)
 		);
-		
+	
 	stopwatch stopwatch_m(
 		.up(up),
 		.down(down),
@@ -152,6 +167,7 @@ module watch(
 		.mode(mode[3]),
 		
 		.out(out_w[3]),
+		.blk(blk[3]),
 		.norm(norm[3])
 		);
 
@@ -186,4 +202,5 @@ module watch(
 		.out(out_w[5]),
 		.norm(norm[5])
 		);
+
 endmodule

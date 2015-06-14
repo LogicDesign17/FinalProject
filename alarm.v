@@ -12,6 +12,7 @@ module alarm(
     input [6:0] min,
     input [6:0] sec,
     output [47:0] out,
+	output reg [5:0] blk,
 	output alm,
     output reg norm
     );
@@ -19,11 +20,8 @@ module alarm(
 	reg [6:0] alm_h, alm_m;
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
 	reg active, ring, ring_f;
-	reg [3:0] blk;
-	reg [31:0] blk_on;
 
 	wire [3:0] h1, h0, m1, m0, s1, s0;
-	wire [47:0] raw;
 	
 	integer i, j;
 	
@@ -33,10 +31,11 @@ module alarm(
 		left_f = 0; right_f = 0;
 		enter_f = 0; esc_f = 0;
 		alm_h = 0; alm_m = 0;
-		blk = 0; blk_on = 0;
+		blk = 0;
 		ring = 0; active = 0;
-		$monitor("%t active: %b, ring: %b", $time, active, ring);
 	end
+	
+	assign alm = ring;
 	
 	always @(posedge clk) begin
 		// Foreground
@@ -47,7 +46,7 @@ module alarm(
 				if (enter && !enter_f) begin
 					enter_f <= 1'b1;
 					norm <= 0;
-					blk <= 4'b1100;
+					blk <= 6'b110000;
 				end
 				else if (!enter) enter_f <= 1'b0;
 
@@ -78,21 +77,21 @@ module alarm(
 				if (esc && !esc_f) begin
 					esc_f <= 1'b1;
 					norm <= 1;
-					blk <= 4'b0000;
+					blk <= 6'b000000;
 				end
 				else if (!esc) esc_f <= 1'b0;
 				
 				// LEFT
 				if (left && !left_f) begin
 					left_f <= 1'b1;
-					blk <= ~blk;
+					blk <= {blk[3:2], blk[5:4], 2'b00};
 				end
 				else if (!left) left_f <= 1'b0;
 				
 				// Right
 				if (right && !right_f) begin
 					right_f <= 1'b1;
-					blk <= ~blk;
+					blk <= {blk[5:4], blk[3:2], 2'b00};
 				end
 				else if (!right) right_f <= 1'b0;
 
@@ -116,11 +115,11 @@ module alarm(
 				if (down && !down_f) begin
 					down_f <= 1'b1;
 					case (blk)
-						4'b1100: begin
+						6'b110000: begin
 							if (alm_h == 0) alm_h <= 23;
 							else alm_h <= alm_h - 1;
 						end
-						4'b0011: begin
+						6'b001100: begin
 							if (alm_m == 0) alm_m <= 59;
 							else alm_m <= alm_m - 1;
 						end
@@ -142,27 +141,16 @@ module alarm(
 				ring_f <= 1'b0;
 			end
 		end
-		
-		// Output formatting
-		for (i = 0; i < 4; i = i + 1) begin
-			for (j = 0; j < 8; j = j + 1) begin
-				blk_on[8*i+j] = blk[i];
-			end
-		end
 	end
 	
 	digit_split ds_h(.in(alm_h), .out1(h1), .out0(h0));
 	digit_split ds_m(.in(alm_m), .out1(m1), .out0(m0));
 	
-	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
-	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
-	bcd2seven bs_m1(.in({0, m1}), .out(raw[31:24]));
-	bcd2seven bs_m0(.in({0, m0}), .out(raw[23:16]));
-	bcd2seven bs_s1(.in(5'b00000), .out(raw[15:8]));
-	bcd2seven bs_s0(.in(5'b00000), .out(raw[7:0]));
-
-	blink blk_alm(.on(ring & active), .val(ring & active), .clk(clk), .out(alm));
-	blink blinker[31:0] (.on(blk_on), .val(raw[47:16]), .clk(clk), .out(out[47:16]));
-	blink blk_sec[15:0] (.on(active), .val(raw[15:0]), .clk(clk), .out(out[15:0]));
+	bcd2seven bs_h1(.in({0, h1}), .out(out[47:40]));
+	bcd2seven bs_h0(.in({0, h0}), .out(out[39:32]));
+	bcd2seven bs_m1(.in({0, m1}), .out(out[31:24]));
+	bcd2seven bs_m0(.in({0, m0}), .out(out[23:16]));
+	bcd2seven bs_s1(.in(5'b00000), .out(out[15:8]));
+	bcd2seven bs_s0(.in({4'b0000, active}), .out(out[7:0]));
 
 endmodule
