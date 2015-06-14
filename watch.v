@@ -32,7 +32,7 @@ module watch(
 	);
 	
 	reg [6:0] mode;
-	reg up, down, left, right, enter, esc;
+	reg up, down, left, right, enter, esc, tmp;
 	reg up_mark, down_mark;
 	
 	wire [6:0] norm;
@@ -182,5 +182,9 @@ module watch(
 		.out(out_w[6]),
 		.norm(norm[6])
 		);
+<<<<<<< HEAD
 */	
+=======
+		
+>>>>>>> 34cbca757c0a82de8291240c2721865cfd2a4275
 endmodule
