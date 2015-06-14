@@ -29,7 +29,7 @@ module timer(
 	input mode,
 	output [47:0] out,
 	output norm,
-	output alarm
+	output alm
 	);
 	
 	// Base registers

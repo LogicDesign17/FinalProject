@@ -137,11 +137,11 @@ module clock(
 				
 			end
 		end
-		else norm = 1;
+		else norm <= 1;
 		
 		// Background
 		if (norm) begin
-			if (count == 999999) begin
+			if (count == 999) begin
 				count <= 0;
 				if (sec == 59) begin
 					sec <= 0;

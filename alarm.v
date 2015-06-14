@@ -53,6 +53,7 @@ module alarm(
 		enter_f = 0; esc_f = 0;
 		alm_h = 0; alm_m = 0;
 		blk = 0; blk_on = 0;
+		ring = 0; active = 0;
 		$monitor("%t active: %b, ring: %b", $time, active, ring);
 	end
 	
@@ -76,19 +77,19 @@ module alarm(
 				end
 				else if (!esc) esc_f <= 1'b0;
 				
-				// UP
-				if (up && !up_f) begin
+				// LEFT
+				if (left && !left_f) begin
+					right_f <= 1'b1;
+					active <= 1'b0;
+				end
+				else if (!left) left_f <= 1'b0;
+				
+				// RIGHT
+				if (right && !right_f) begin
 					up_f <= 1'b1;
 					active <= 1'b1;
 				end
-				else if (!up) up_f <= 1'b0;
-				
-				// DOWN
-				if (down && !down_f) begin
-					down_f <= 1'b1;
-					active <= 1'b0;
-				end
-				else if (!down) down_f <= 1'b0;
+				else if (!right) right_f <= 1'b0;
 			end
 			// At setting
 			else begin
