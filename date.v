@@ -35,7 +35,7 @@ module date(
 	assign bcd[24] = vcc;
 	assign bcd[29] = vcc;
 	
-	day_of_month(.year(year), .month(month), .out(day_num));
+	day_of_month dm(.year(year), .month(month), .out(day_num));
 
 	always @(posedge clk) begin
 		// Foreground

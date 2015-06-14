@@ -13,21 +13,19 @@ module watch(
 	);
 
 
-	reg [6:0] mode;
+	reg [5:0] mode;
 	reg [4:0] mode_bcd;
 	reg up, down, left, right, enter, esc, tmp;
 	reg up_mark, down_mark;
 	
-	wire [6:0] norm;
-	wire [47:0] out_w [0:6], o_m_w;
+	wire [5:0] norm;
+	wire [47:0] out_w [0:6];
 	wire [6:0] year, month, day, hour, min, sec;
 	wire carry;
-	wire [0:0] alarm_w;
+	wire [1:0] alm_w;
 	
 	initial begin
-		$monitor("%t  norm: %b, mode_bcd: %b", $time, norm, mode_bcd);
-		//$monitor("Clock: %d : %d : %d norm: %b",
-		//	clock_m.hour, clock_m.min, clock_m.sec, clock_m.norm);
+	//	$monitor("%t  norm: %b, mode_bcd: %b", $time, norm, mode_bcd);
 	end
 	
 	always @(negedge clk) begin
@@ -40,8 +38,7 @@ module watch(
 	end
 	
 	initial begin
-		mode <= 7'b0000010;
-		
+		mode <= 6'b000010;
 	end
 
 	always @(posedge clk) begin
@@ -49,47 +46,43 @@ module watch(
 			if (!down) down_mark = 0;
 			if (!up) up_mark = 0;
 			if (up && !up_mark) begin
-				mode <= {mode[5:0], mode[6]};
+				mode <= {mode[4:0], mode[5]};
 				up_mark = 1;
 			end
 			else if (down && !down_mark) begin
-				mode <= {mode[0], mode[6:1]};
+				mode <= {mode[0], mode[5:1]};
 				down_mark = 1;
 			end
 		end
 		
 		case (mode)
-			7'b0000001: begin
+			6'b000001: begin
 				mode_bcd = 0;
 				out = out_w[0];
 			end
-			7'b0000010: begin
+			6'b000010: begin
 				mode_bcd = 1;
 				out = out_w[1];
 			end
-			7'b0000100: begin
+			6'b000100: begin
 				mode_bcd = 2;
 				out = out_w[2];
 			end
-			7'b0001000: begin
+			6'b001000: begin
 				mode_bcd = 3;
 				out = out_w[3];
 			end
-			7'b0010000: begin
+			6'b010000: begin
 				mode_bcd = 4;
 				out = out_w[4];
 			end
-			7'b0100000: begin
+			6'b100000: begin
 				mode_bcd = 5;
 				out = out_w[5];
 			end
-			7'b1000000: begin
-				mode_bcd = 6;
-				out = out_w[6];
-			end
 		endcase
 
-		alm = !(!alarm_w);
+		alm = !(!alm_w);
 	end
 	
 	bcd2seven bs_mode(.in(mode_bcd), .out(out_m));
@@ -141,7 +134,7 @@ module watch(
 		.mode(mode[2]),
 		
 		.out(out_w[2]),
-		.alm(alarm_w[0]),
+		.alm(alm_w[0]),
 		.norm(norm[2]),
 		.hour(hour),
 		.min(min),
@@ -174,7 +167,7 @@ module watch(
 		
 		.out(out_w[4]),
 		.norm(norm[4]),
-		.alm(alarm_w[1])
+		.alm(alm_w[1])
 		);
 
 	d_day d_day_m(
@@ -193,19 +186,4 @@ module watch(
 		.out(out_w[5]),
 		.norm(norm[5])
 		);
-	
-	ladder ladder_m(
-		.up(up),
-		.down(down),
-		.left(left),
-		.right(right),
-		.enter(enter),
-		.esc(esc),
-		.clk(clk),
-		.mode(mode[6]),
-		
-		.out(out_w[6]),
-		.norm(norm[6])
-		);
-
 endmodule
