@@ -68,7 +68,7 @@ module watch(
 			end
 		end
 	end
-	
+/*	
 	date date_m(
 		.up(up),
 		.down(down),
@@ -182,5 +182,5 @@ module watch(
 		.out(out_w[6]),
 		.norm(norm[6])
 		);
-	
+*/	
 endmodule
