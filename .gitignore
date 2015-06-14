@@ -2,6 +2,6 @@
 
 !.gitignore
 !*.v
-*.xise
-Watch.xise
+!*.ucf
+*.xiseWatch.xise
 Watch.xise

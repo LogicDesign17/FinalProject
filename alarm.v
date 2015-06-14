@@ -46,6 +46,15 @@ module alarm(
 	
 	integer i, j;
 	
+	initial begin
+		norm = 1;
+		up_f = 0; down_f = 0;
+		left_f = 0; right_f = 0;
+		enter_f = 0; esc_f = 0;
+		alm_h = 0; alm_m = 0;
+		blk = 0; blk_on = 0;
+	end
+	
 	always @(posedge clk) begin
 		// Foreground
 		if (mode) begin
@@ -160,14 +169,13 @@ module alarm(
 	
 	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
 	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
-	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
 	
 	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
 	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
 	bcd2seven bs_m1(.in({0, m1}), .out(raw[31:24]));
 	bcd2seven bs_m0(.in({0, m0}), .out(raw[23:16]));
-	bcd2seven bs_s1(.in({0, s1}), .out(raw[15:8]));
-	bcd2seven bs_s0(.in({0, s0}), .out(raw[7:0]));
+	bcd2seven bs_s1(.in(5'b00000), .out(raw[15:8]));
+	bcd2seven bs_s0(.in(5'b00000), .out(raw[7:0]));
 
 	blink blk_alm(.on(ring), .val(ring), .out(alm));
 	blink blinker[31:0] (.on(blk_on), .val(raw[47:16]), .clk(clk), .out(out[47:16]));
