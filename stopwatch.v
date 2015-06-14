@@ -111,8 +111,6 @@ module stopwatch(
 			sw_min = 0;
 			sw_sec0 = 0;
 			sw_sec1 = 0;
-			enter_mark = 0;
-			esc_mark = 0;
 		end
 	end
 	
@@ -146,6 +144,6 @@ module stopwatch(
 	assign out[37] = out_a[4][5];
 	assign out[38] = out_a[4][6];
 	assign out[39] = 1;
-	assign out[47:39] = out_a[5];
+	assign out[47:40] = out_a[5];
 
 endmodule
