@@ -9,226 +9,191 @@ module timer(
 	input clk,
 	input mode,
 	output [47:0] out,
-	output norm,
+	output reg norm,
 	output alm
 	);
 	
-	// Base registers
-	reg up_mark, down_mark, left_mark, right_mark, enter_mark, esc_mark, norm_r;
-	reg [7:0] out_a [0:5];
-	wire [7:0] out_a_w [0:5];
-	assign out_a_w[0] = out_a[0];
-	assign out_a_w[1] = out_a[1];
-	assign out_a_w[2] = out_a[2];
-	assign out_a_w[3] = out_a[3];
-	assign out_a_w[4] = out_a[4];
-	assign out_a_w[5] = out_a[5];
+	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
+	reg [5:0] blk;
+	reg [47:0] blk_on;
+	reg [19:0] count;
+	reg active;
+	reg ring, ring_f;
+	reg [6:0] hour, min, sec;
+	reg [6:0] hour_s, min_s, sec_s; // saved value
+	wire [3:0] h1, h0, m1, m0, s1, s0;
+	wire [47:0] raw;
+	integer i, j;
 	
-	// Timer registers
-	reg [4:0] tm_out [0:5];
-	reg [19:0] tm_count;
-	reg [6:0] tm_hour, tm_min, tm_sec;
-	reg [1:0] tm_setting;
-	reg tm_flow;
-	wire [3:0] tm_out_w [0:5];
-	reg [5:0] blink_on;
-	wire [7:0] blink_out_w [0:5];
-	reg [7:0] blink_out [0:5];
-	assign blink_out_w[0] = blink_out[0];
-	assign blink_out_w[1] = blink_out[1];
-	assign blink_out_w[2] = blink_out[2];
-	assign blink_out_w[3] = blink_out[3];
-	assign blink_out_w[4] = blink_out[4];
-	assign blink_out_w[5] = blink_out[5];
-	
-	integer I;
-	
-	always @(posedge clk) begin
-		for(I=0;I<6;I=I+1) begin
-			tm_out[I] = tm_out_w[I];
-		end
-	end
-	
-	assign norm = norm_r;
-	
-	// initialize
 	initial begin
-		tm_count = 0;
-		tm_hour = 0;
-		tm_min = 0;
-		tm_sec = 0;
-		tm_setting = 0;
-		tm_flow = 0;
-		up_mark = 0;
-		down_mark = 0;
-		left_mark = 0;
-		right_mark = 0;
-		enter_mark = 0;
-		esc_mark = 0;
-		norm_r = 1;
+		up_f = 0; down_f = 0;
+		left_f = 0; right_f = 0;
+		enter_f = 0; esc_f = 0;
+		blk = 6'b000000;
+		count = 0;
+		hour = 0; min = 0; sec = 0;
+		hour_s = 0; min_s = 0; sec_s = 0;
+		norm = 1;
 	end
-	
-	// mark
+
 	always @(posedge clk) begin
-		if(up & !up_mark) begin
-			up_mark = 1;
-		end
-		else if(!up) up_mark = 0;
-		if(down & !down_mark) begin
-			down_mark = 1;
-		end
-		else if(!down) down_mark = 0;
-		if(left & !left_mark) begin
-			left_mark = 1;
-		end
-		else if(!left) left_mark = 0;
-		if(right & !right_mark) begin
-			right_mark = 1;
-		end
-		else if(!right) right_mark = 0;
-		if(enter & !enter_mark) begin
-			enter_mark = 1;
-		end
-		else if(!enter) enter_mark = 0;
-		if(esc & !esc_mark) begin
-			esc_mark = 1;
-		end
-		else if(!esc) esc_mark = 0;
-	end
-	
-	// Blink
-	always @(posedge clk) begin
-		if (tm_setting == 1) blink_on <= 6'b000011;
-		else if (tm_setting == 2) blink_on <= 6'b001100;
-		else if (tm_setting == 3) blink_on <= 6'b110000;
-	end
-	
-	blink tm_blink0 [7:0] (.on(blink_on[0]),.val(out_a[0]),.clk(clk),.out(blink_out_w[0]));
-	blink tm_blink1 [7:0] (.on(blink_on[1]),.val(out_a[1]),.clk(clk),.out(blink_out_w[1]));
-	blink tm_blink2 [7:0] (.on(blink_on[2]),.val(out_a[2]),.clk(clk),.out(blink_out_w[2]));
-	blink tm_blink3 [7:0] (.on(blink_on[3]),.val(out_a[3]),.clk(clk),.out(blink_out_w[3]));
-	blink tm_blink4 [7:0] (.on(blink_on[4]),.val(out_a[4]),.clk(clk),.out(blink_out_w[4]));
-	blink tm_blink5 [7:0] (.on(blink_on[5]),.val(out_a[5]),.clk(clk),.out(blink_out_w[5]));
-	
-	// Mode control (norm) Ãß°¡
-	always @(posedge clk) begin
-		if (tm_setting) norm_r = 0;
-		else norm_r = 1;
-	end
-	
-	// Timer
-	always @(posedge clk) begin
-		if(mode) begin
-			// Reset
-			if(esc) begin
-				tm_count = 0;
-				tm_hour = 0;
-				tm_min = 0;
-				tm_sec = 0;
-				tm_setting = 0;
-				tm_flow = 0;
+		// Foreground
+		if (mode) begin
+			// At norm state
+			if (norm) begin
+				// ENTER
+				if (enter && !enter_f) begin
+					enter_f <= 1'b1;
+					norm <= 0;
+					blk <= 6'b110000;
+					hour <= hour_s;
+					min <= min_s;
+					sec <= sec_s;
+				end
+				else if (!enter) enter_f <= 1'b0;
+				
+				// ESC
+				if (esc && !esc_f) begin
+					esc_f <= 1'b1;
+					ring <= 1'b0;
+				end
+				else if (!esc) esc_f <= 1'b0;
+				
+				// LEFT
+				if (left && !left_f) begin
+					right_f <= 1'b1;
+					if (active) active <= 1'b0;
+					else begin
+						hour <= hour_s;
+						min <= min_s;
+						sec <= sec_s;
+					end
+				end
+				else if (!left) left_f <= 1'b0;
+				
+				// RIGHT
+				if (right && !right_f) begin
+					up_f <= 1'b1;
+					active <= 1'b1;
+					count <= 0;
+				end
+				else if (!right) right_f <= 1'b0;
 			end
-			
-			// Timer
-			else if(tm_flow) begin
-				tm_setting = 0;
-				if(enter & !enter_mark) tm_flow = 0;
-				else begin
-					tm_count = tm_count + 1;
-					if(tm_count == 1000000) begin
-						tm_count = 0;
-						tm_sec = tm_sec - 1;
-						if(tm_sec == 127) begin
-							if(tm_hour || tm_min) begin
-								tm_min = tm_min - 1;
-								tm_sec = 59;
-								if(tm_min == 127) begin
-									tm_hour = tm_hour - 1;
-									tm_min = 59;
-								end
-							end
-							else begin
-								tm_flow = 0;
-								tm_sec = 0;
-							end
+			// At setting
+			else begin
+				// ESC
+				if (esc && !esc_f) begin
+					esc_f <= 1'b1;
+					norm <= 1;
+					blk <= 6'b000000;
+					hour_s <= hour;
+					min_s <= min;
+					sec_s <= sec;
+				end
+				else if (!esc) esc_f <= 1'b0;
+				
+				// LEFT
+				if (left && !left_f) begin
+					left_f <= 1'b1;
+					blk <= {blk[3:0], blk[5:4]};
+				end
+				else if (!left) left_f <= 1'b0;
+				
+				// Right
+				if (right && !right_f) begin
+					right_f <= 1'b1;
+					blk <= {blk[1:0], blk[5:2]};
+				end
+				else if (!right) right_f <= 1'b0;
+				
+				// UP
+				if (up && !up_f) begin
+					up_f <= 1'b1;
+					case (blk)
+						6'b110000: begin
+							if (hour == 23) hour <= 0;
+							else hour <= hour + 1;
+						end
+						6'b001100: begin
+							if (min == 59) min <= 0;
+							else min <= min + 1;
+						end
+						6'b000011: begin
+							if (sec == 59) sec <= 0;
+							else sec <= sec + 1;
+						end
+					endcase
+				end
+				else if (!up) up_f <= 1'b0;
+				
+				// DOWN
+				if (down && !down_f) begin
+					down_f <= 1'b1;
+					case (blk)
+						6'b110000: begin
+							if (hour == 0) hour <= 23;
+							else hour <= hour - 1;
+						end
+						6'b001100: begin
+							if (min == 0) min <= 59;
+							else min <= min - 1;
+						end
+						6'b000011: begin
+							if (sec == 0) sec <= 59;
+							else sec <= sec - 1;
+						end
+					endcase
+				end
+				else if (!down) down_f <= 1'b0;
+				
+			end
+		end
+		else norm <= 1;
+		
+		// Background
+		if (norm && active && (hour | min | sec)) begin
+			if (count == 999) begin
+				count <= 0;
+				if (sec == 0) begin
+					if (min == 0) begin
+						if (hour == 0) begin
+							sec <= 0;
+							ring <= 1;
+						end
+						else begin
+							hour <= hour - 1;
+							min <= 0;
 						end
 					end
+					else begin
+						min <= min - 1;
+						sec <= 0;
+					end
 				end
+				else sec <= sec - 1;
 			end
-			
-			// Setting
-			else if (tm_setting) begin
-				if (enter && !enter_mark) tm_setting = 0;
-				else if (tm_setting == 1) begin
-					if(left & !left_mark) tm_setting = 2;
-					else if (right & !right_mark) tm_setting = 3;
-					else if (up & !up_mark) begin
-						tm_sec = tm_sec + 1;
-						if (tm_sec == 60) tm_sec = 0;
-					end
-					else if (down & !down_mark) begin
-						tm_sec = tm_sec - 1;
-						if (tm_sec == 127) tm_sec = 59;
-					end
-				end
-				else if (tm_setting == 2) begin
-					if (left & !left_mark) tm_setting = 3;
-					else if (right & !right_mark) tm_setting = 1;
-					else if (up & !up_mark) begin
-						tm_min = tm_min + 1;
-						if (tm_min == 60) tm_min = 0;
-					end
-					else if (down & !down_mark) begin
-						tm_min = tm_min - 1;
-						if (tm_min == 127) tm_min = 59;
-					end
-				end
-				else if (tm_setting == 3) begin
-					if (left & !left_mark) tm_setting = 1;
-					else if (right & !right_mark) tm_setting = 2;
-					else if (up & !up_mark) begin
-						tm_hour = tm_hour + 1;
-						if (tm_hour == 100) tm_hour = 0;
-					end
-					else if (down & !down_mark) begin
-						tm_hour = tm_hour - 1;
-						if (tm_hour == 127) tm_hour = 99;
-					end
-				end
-			end
-			
-			// Button
-			else if(right) tm_flow = 1;
-			else if(enter & !enter_mark) tm_setting = 1;
+			else count <= count + 1;
 		end
-		else begin
-			tm_count = 0;
-			tm_hour = 0;
-			tm_min = 0;
-			tm_sec = 0;
-			tm_setting = 0;
-			tm_flow = 0;
+		
+		// Output formatting
+		for (i = 0; i < 6; i = i + 1) begin
+			for (j = 0; j < 8; j = j + 1) begin
+				blk_on[8*i+j] = blk[i];
+			end
 		end
 	end
-	
-	digit_split tm_hour_split(.in(tm_hour), .out1(tm_out_w[5]), .out0(tm_out_w[4]));
-	digit_split tm_min_split(.in(tm_min), .out1(tm_out_w[3]), .out0(tm_out_w[2]));
-	digit_split tm_sec_split(.in(tm_sec), .out1(tm_out_w[1]), .out0(tm_out_w[0]));
-	
-	bcd2seven tm_out_m0 (.in(tm_out[0]),.out(out_a_w[0]));
-	bcd2seven tm_out_m1 (.in(tm_out[1]),.out(out_a_w[1]));
-	bcd2seven tm_out_m2 (.in(tm_out[2]),.out(out_a_w[2]));
-	bcd2seven tm_out_m3 (.in(tm_out[3]),.out(out_a_w[3]));
-	bcd2seven tm_out_m4 (.in(tm_out[4]),.out(out_a_w[4]));
-	bcd2seven tm_out_m5 (.in(tm_out[5]),.out(out_a_w[5]));
-	
-	assign out[7:0] = blink_out[0];
-	assign out[15:8] = blink_out[1];
-	assign out[22:16] = blink_out[2][6:0];
-	assign out[23] = 1;
-	assign out[31:24] = blink_out[3];
-	assign out[38:32] = blink_out[4][6:0];
-	assign out[39] = 1;
-	assign out[47:40] = blink_out[5];
 
+	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
+	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
+	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
+	
+	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
+	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
+	bcd2seven bs_m1(.in({0, m1}), .out(raw[31:24]));
+	bcd2seven bs_m0(.in({0, m0}), .out(raw[23:16]));
+	bcd2seven bs_s1(.in({0, s1}), .out(raw[15:8]));
+	bcd2seven bs_s0(.in({0, s0}), .out(raw[7:0]));
+	
+	blink blinker[47:0] (.on(blk_on), .val(raw), .clk(clk), .out(out));
+	
 endmodule
