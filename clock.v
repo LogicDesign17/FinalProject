@@ -27,7 +27,7 @@ module clock(
 	input esc,
 	input clk,
 	input mode,
-	output tri0 [47:0] out,
+	output [47:0] out,
 	output reg norm,
 	output reg [6:0] hour,
 	output reg [6:0] min,
@@ -174,12 +174,12 @@ module clock(
 	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
 	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
 	
-	bcd2seven bs_h1(.in(h1), .out(raw[47:40]));
-	bcd2seven bs_h0(.in(h0), .out(raw[39:32]));
-	bcd2seven bs_m1(.in(m1), .out(raw[31:24]));
-	bcd2seven bs_m0(.in(m0), .out(raw[23:16]));
-	bcd2seven bs_s1(.in(s1), .out(raw[15:8]));
-	bcd2seven bs_s0(.in(s0), .out(raw[7:0]));
+	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
+	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
+	bcd2seven bs_m1(.in({0, m1}), .out(raw[31:24]));
+	bcd2seven bs_m0(.in({0, m0}), .out(raw[23:16]));
+	bcd2seven bs_s1(.in({0, s1}), .out(raw[15:8]));
+	bcd2seven bs_s0(.in({0, s0}), .out(raw[7:0]));
 	
 	blink blinker[47:0] (.on(blk_on), .val(raw), .clk(clk), .out(out));
 
