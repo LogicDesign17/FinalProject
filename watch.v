@@ -28,7 +28,7 @@ module watch(
 	input clk,
 	output reg [7:0] o_m,
 	output reg [47:0] out,
-	output reg alarm
+	output reg alm
 	);
 	
 	reg [6:0] mode;
@@ -116,7 +116,7 @@ module watch(
 		.mode(mode[2]),
 		
 		.out(out_w[2]),
-		.alarm(alarm_w[2]),
+		.alm(alarm_w[2]),
 		.norm(norm[2]),
 		.hour(hour),
 		.min(min),
@@ -151,7 +151,7 @@ module watch(
 		
 		.out(out_w[4]),
 		.norm(norm[4]),
-		.alarm(alarm_w[4])
+		.alm(alarm_w[4])
 		);
 	
 	d_day d_day_m(
