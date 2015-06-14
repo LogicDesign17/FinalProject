@@ -46,8 +46,16 @@ module stopwatch(
 	reg [13:0] sw_count;
 	reg [6:0] sw_min, sw_sec1, sw_sec0;
 	reg sw_pause;
-	wire [4:0] sw_out_w [0:5];
-	
+	reg [4:0] sw_out [0:5];
+	wire [3:0] sw_out_w [0:5];
+	assign sw_out_w[0][0] = sw_out[0][0];
+	/*
+	assign sw_out_w[0] = sw_out[0];
+	assign sw_out_w[1] = sw_out[1];
+	assign sw_out_w[2] = sw_out[2];
+	assign sw_out_w[3] = sw_out[3];
+	assign sw_out_w[4] = sw_out[4];
+	assign sw_out_w[5] = sw_out[5];*/
 	assign norm = norm_r;
 	
 	// initialize
@@ -60,6 +68,12 @@ module stopwatch(
 		enter_mark = 0;
 		esc_mark = 0;
 		norm_r = 1;
+		sw_out[0][4] = 0;
+		sw_out[1][4] = 0;
+		sw_out[2][4] = 0;
+		sw_out[3][4] = 0;
+		sw_out[4][4] = 0;
+		sw_out[5][4] = 0;
 	end
 	
 	// mark
@@ -111,21 +125,23 @@ module stopwatch(
 			sw_min = 0;
 			sw_sec0 = 0;
 			sw_sec1 = 0;
+			sw_count = 0;
 		end
 	end
 	
 	digit_split sw_min_split(.in(sw_min), .out1(sw_out_w[5]), .out0(sw_out_w[4]));
 	digit_split sw_sec1_split(.in(sw_sec1), .out1(sw_out_w[3]), .out0(sw_out_w[2]));
 	digit_split sw_sec0_split(.in(sw_sec0), .out1(sw_out_w[1]), .out0(sw_out_w[0]));
-
-	bcd2seven sw_out_m0 (.in(sw_out_w[0]),.out(out_a_w[0]));
-	bcd2seven sw_out_m1 (.in(sw_out_w[1]),.out(out_a_w[1]));
-	bcd2seven sw_out_m2 (.in(sw_out_w[2]),.out(out_a_w[2]));
-	bcd2seven sw_out_m3 (.in(sw_out_w[3]),.out(out_a_w[3]));
-	bcd2seven sw_out_m4 (.in(sw_out_w[4]),.out(out_a_w[4]));
-	bcd2seven sw_out_m5 (.in(sw_out_w[5]),.out(out_a_w[5]));
+/*
+	bcd2seven sw_out_m0 (.in(sw_out[0]),.out(out_a_w[0]));
+	bcd2seven sw_out_m1 (.in(sw_out[1]),.out(out_a_w[1]));
+	bcd2seven sw_out_m2 (.in(sw_out[2]),.out(out_a_w[2]));
+	bcd2seven sw_out_m3 (.in(sw_out[3]),.out(out_a_w[3]));
+	bcd2seven sw_out_m4 (.in(sw_out[4]),.out(out_a_w[4]));
+	bcd2seven sw_out_m5 (.in(sw_out[5]),.out(out_a_w[5]));*/
 	
-	assign out[7:0] = out_a[0];
+	assign out[0] = sw_out[0][0];
+	assign out[7:1] = 0;
 	assign out[15:8] = out_a[1];
 	assign out[16] = out_a[2][0];
 	assign out[17] = out_a[2][1];

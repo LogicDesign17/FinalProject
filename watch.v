@@ -51,7 +51,7 @@ module watch(
 	end
 	
 	initial begin
-		mode <= 6'b100000;
+		mode <= 7'b0001000;
 	end
 	
 	always @(posedge clk) begin
@@ -86,7 +86,7 @@ module watch(
 		.month(month),
 		.day(day)
 		);
-*/		
+	
 	clock clock_m(
 		.up(up),
 		.down(down),
@@ -104,7 +104,7 @@ module watch(
 		.sec(sec),
 		.carry_out(carry)
 		);
-/*	
+
 	alarm alarm_m(
 		.up(up),
 		.down(down),
@@ -122,6 +122,7 @@ module watch(
 		.min(min),
 		.sec(sec)
 		);
+*/
 		
 	stopwatch stopwatch_m(
 		.up(up),
@@ -137,6 +138,7 @@ module watch(
 		.norm(norm[3])
 		);
 		
+/*
 	timer timer_m(
 		.up(up),
 		.down(down),
