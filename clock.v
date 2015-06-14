@@ -19,21 +19,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module clock(
-    input up,
-    input down,
-    input left,
-    input right,
-    input enter,
-    input esc,
-    input clk,
+	input up,
+	input down,
+	input left,
+	input right,
+	input enter,
+	input esc,
+	input clk,
 	input mode,
-    output tri0 [47:0] out,
-    output reg norm,
-    output reg [6:0] hour,
-    output reg [6:0] min,
-    output reg [6:0] sec,
+	output tri0 [47:0] out,
+	output reg norm,
+	output reg [6:0] hour,
+	output reg [6:0] min,
+	output reg [6:0] sec,
 	output reg carry_out
-    );
+	);
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
 	reg [5:0] blk;

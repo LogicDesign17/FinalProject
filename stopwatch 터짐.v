@@ -129,23 +129,11 @@ module stopwatch(
 	
 	assign out[7:0] = out_a[0];
 	assign out[15:8] = out_a[1];
-	assign out[16] = out_a[2][0];
-	assign out[17] = out_a[2][1];
-	assign out[18] = out_a[2][2];
-	assign out[19] = out_a[2][3];
-	assign out[20] = out_a[2][4];
-	assign out[21] = out_a[2][5];
-	assign out[22] = out_a[2][6];
+	assign out[22:16] = out_a[2];
 	assign out[23] = 1;
 	assign out[31:24] = out_a[3];
-	assign out[32] = out_a[4][0];
-	assign out[33] = out_a[4][1];
-	assign out[34] = out_a[4][2];
-	assign out[35] = out_a[4][3];
-	assign out[36] = out_a[4][4];
-	assign out[37] = out_a[4][5];
-	assign out[38] = out_a[4][6];
+	assign out[38:32] = out_a[4];
 	assign out[39] = 1;
 	assign out[47:39] = out_a[5];
-
+	
 endmodule
