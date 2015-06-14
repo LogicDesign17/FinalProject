@@ -1,4 +1,4 @@
-`timescale 1ns / 1ps
+`timescale 1us / 1ns
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -52,9 +52,8 @@ module clock(
 		hour = 0; min = 0; sec = 0;
 		carry_out = 0;
 		norm = 1;
-		$display("Initialization complete");
 	end
-
+	
 	always @(posedge clk) begin
 		// Foreground
 		if (mode) begin
@@ -65,9 +64,10 @@ module clock(
 					enter_f <= 1'b1;
 					norm <= 0;
 					blk <= 6'b110000;
-					$display("Entering setting");
 				end
-				else if (!enter) enter_f <= 1'b0;
+				else if (!enter) begin
+					enter_f <= 1'b0;
+				end
 			end
 			// At setting
 			else begin

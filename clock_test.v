@@ -1,4 +1,4 @@
-`timescale 1us / 500ns
+`timescale 1us / 1ns
 
 ////////////////////////////////////////////////////////////////////////////////
 // Company: 
@@ -69,11 +69,11 @@ module clock_test;
 		enter = 0;
 		esc = 0;
 		clk = 0;
-		mode = 0;
+		mode = 1;
 
 		// Wait 100 ns for global reset to finish
 		#10000 enter = 1;
-		#100 enter = 0;
+		#1000 enter = 0;
 		#1000 up = 1;
 		#100 up = 0;
 		#1000 up = 1;
