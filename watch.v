@@ -86,7 +86,7 @@ module watch(
 		.month(month),
 		.day(day)
 		);
-		
+*/		
 	clock clock_m(
 		.up(up),
 		.down(down),
@@ -104,7 +104,7 @@ module watch(
 		.sec(sec),
 		.carry_out(carry)
 		);
-	
+/*	
 	alarm alarm_m(
 		.up(up),
 		.down(down),
@@ -182,9 +182,5 @@ module watch(
 		.out(out_w[6]),
 		.norm(norm[6])
 		);
-<<<<<<< HEAD
-*/	
-=======
-		
->>>>>>> 34cbca757c0a82de8291240c2721865cfd2a4275
+*/
 endmodule
