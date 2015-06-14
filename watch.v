@@ -30,7 +30,8 @@ module watch(
 	output reg [47:0] out,
 	output reg alm
 	);
-	
+
+/*
 	reg [6:0] mode;
 	reg up, down, left, right, enter, esc, tmp;
 	reg up_mark, down_mark;
@@ -68,7 +69,7 @@ module watch(
 			end
 		end
 	end
-/*	
+	
 	date date_m(
 		.up(up),
 		.down(down),
@@ -122,7 +123,6 @@ module watch(
 		.min(min),
 		.sec(sec)
 		);
-*/
 		
 	stopwatch stopwatch_m(
 		.up(up),
@@ -137,8 +137,7 @@ module watch(
 		.out(out_w[3]),
 		.norm(norm[3])
 		);
-		
-/*
+
 	timer timer_m(
 		.up(up),
 		.down(down),
