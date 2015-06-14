@@ -137,6 +137,7 @@ module clock(
 				
 			end
 		end
+		else norm = 1;
 		
 		// Background
 		if (norm) begin
