@@ -86,7 +86,7 @@ module alarm_test;
 		#1000 up = 0;
 		
 		#10000 hour = 2; min = 0; sec = 0;
-		#500000 esc = 1; #100 esc = 0;
+		#70000 esc = 1; #100 esc = 0;
 	end
 	
 	always #0.01 clk = ~clk;

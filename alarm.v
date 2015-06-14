@@ -53,6 +53,7 @@ module alarm(
 		enter_f = 0; esc_f = 0;
 		alm_h = 0; alm_m = 0;
 		blk = 0; blk_on = 0;
+		$monitor("%t active: %b, ring: %b", $time, active, ring);
 	end
 	
 	always @(posedge clk) begin
@@ -150,10 +151,11 @@ module alarm(
 		// Background
 		if (norm && active) begin
 			// Set ring just once. Maximum duration: 1 min
-			if (hour == alm_h && min == alm_m) begin
-				if (!ring_f) ring <= 1'b1;
+			if (hour == alm_h && min == alm_m && !ring_f) begin
+				ring <= 1'b1;
+				ring_f <= 1'b1;
 			end
-			else begin
+			else if (min != alm_m) begin
 				ring <= 1'b0;
 				ring_f <= 1'b0;
 			end
@@ -167,8 +169,8 @@ module alarm(
 		end
 	end
 	
-	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
-	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
+	digit_split ds_h(.in(alm_h), .out1(h1), .out0(h0));
+	digit_split ds_m(.in(alm_m), .out1(m1), .out0(m0));
 	
 	bcd2seven bs_h1(.in({0, h1}), .out(raw[47:40]));
 	bcd2seven bs_h0(.in({0, h0}), .out(raw[39:32]));
@@ -177,7 +179,7 @@ module alarm(
 	bcd2seven bs_s1(.in(5'b00000), .out(raw[15:8]));
 	bcd2seven bs_s0(.in(5'b00000), .out(raw[7:0]));
 
-	blink blk_alm(.on(ring), .val(ring), .out(alm));
+	blink blk_alm(.on(ring & active), .val(ring & active), .clk(clk), .out(alm));
 	blink blinker[31:0] (.on(blk_on), .val(raw[47:16]), .clk(clk), .out(out[47:16]));
 	blink blk_sec[15:0] (.on(active), .val(raw[15:0]), .clk(clk), .out(out[15:0]));
 
