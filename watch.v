@@ -1,23 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    20:42:38 06/01/2015 
-// Design Name: 
-// Module Name:    watch 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
 module watch(
 	input up_i,
 	input down_i,
@@ -180,7 +161,7 @@ module watch(
 		.out(out_w[3]),
 		.norm(norm[3])
 		);
-/*
+
 	timer timer_m(
 		.up(up),
 		.down(down),
@@ -195,7 +176,7 @@ module watch(
 		.norm(norm[4]),
 		.alm(alarm_w[1])
 		);
-*/
+
 	d_day d_day_m(
 		.up(up),
 		.down(down),

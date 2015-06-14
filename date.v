@@ -1,23 +1,4 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    00:06:26 06/14/2015 
-// Design Name: 
-// Module Name:    date 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
 module date(
 	input up,
 	input down,
@@ -164,8 +145,8 @@ module date(
 	end
 	
 	digit_split ds_h(.in(year), .out1(bcd[28:25]), .out0(bcd[23:20]));
-	digit_split ds_m(.in(min), .out1(bcd[18:15]), .out0(bcd[13:10]));
-	digit_split ds_s(.in(sec), .out1(bcd[8:5]), .out0(bcd[3:0]));
+	digit_split ds_m(.in(month), .out1(bcd[18:15]), .out0(bcd[13:10]));
+	digit_split ds_s(.in(day), .out1(bcd[8:5]), .out0(bcd[3:0]));
 
 	bcd2seven bs[0:5] (.in(bcd), .out(seven));	
 	blink blinker[47:0] (.on(blk_on), .val(seven), .clk(clk), .out(out));	

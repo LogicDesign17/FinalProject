@@ -1,23 +1,4 @@
 `timescale 1us / 1ns
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    22:10:13 06/13/2015 
-// Design Name: 
-// Module Name:    clock 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-//////////////////////////////////////////////////////////////////////////////////
 module clock(
 	input up,
 	input down,

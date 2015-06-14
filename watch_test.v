@@ -1,27 +1,4 @@
 `timescale 1ns / 1ps
-
-////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer:
-//
-// Create Date:   18:28:34 06/14/2015
-// Design Name:   watch
-// Module Name:   D:/team17/Watch/watch_test.v
-// Project Name:  Watch
-// Target Device:  
-// Tool versions:  
-// Description: 
-//
-// Verilog Test Fixture created by ISE for module: watch
-//
-// Dependencies:
-// 
-// Revision:
-// Revision 0.01 - File Created
-// Additional Comments:
-// 
-////////////////////////////////////////////////////////////////////////////////
-
 module watch_test;
 
 	// Inputs
