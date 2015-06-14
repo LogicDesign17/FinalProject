@@ -19,22 +19,19 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module day_of_month(
-	year,
-	month,
-	num
+	input [6:0] year,
+	input [6:0] month,
+	output reg [4:0] out
 	);
 	
-	input year,month;
-	output num;
-	reg [4:0] num;
 	
 	always @(year or month) begin
 		case(month)
-			1, 3, 5, 7, 8, 10, 12: num = 31;
-			4, 6, 9, 11: num = 30;
+			1, 3, 5, 7, 8, 10, 12: out = 31;
+			4, 6, 9, 11: out = 30;
 			2: begin
-				if(year & 3 == 0) num = 29;
-				else num = 28;
+				if(year & 3 == 0) out = 29;
+				else out = 28;
 			end
 		endcase
 	end

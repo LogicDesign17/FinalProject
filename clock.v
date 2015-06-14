@@ -82,16 +82,14 @@ module clock(
 				// LEFT
 				if (left && !left_f) begin
 					left_f <= 1'b1;
-					blk[5:2] <= blk[3:0];
-					blk[1:0] <= blk[5:4];
+					blk <= {blk[3:0], blk[5:4]};
 				end
 				else if (!left) left_f <= 1'b0;
 				
 				// Right
 				if (right && !right_f) begin
 					right_f <= 1'b1;
-					blk[3:0] <= blk[5:2];
-					blk[5:4] <= blk[1:0];
+					blk <= {blk[1:0], blk[5:2]};
 				end
 				else if (!right) right_f <= 1'b0;
 				
