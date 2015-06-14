@@ -70,15 +70,7 @@ module stopwatch_test;
 		// Add stimulus here
 		#1000 enter = 1;
 		#100 enter = 0;
-		#500000 enter = 1;
-		#100 enter = 0;
-		#100000 enter = 1;
-		#100 enter = 0;
-		#100000 enter = 1;
-		#100 enter = 0;
-		#1000 esc = 1;
-		#100 esc = 0;
-		#100000 enter = 1;
+		#10500000 enter = 1;
 		#100 enter = 0;
 		#100000 esc = 1;
 		#100 esc = 0;
