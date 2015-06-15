@@ -149,9 +149,9 @@ module clock(
 		end
 	end
 
-	digit_split ds_h(.in(hour), .out1(h1), .out0(h0));
-	digit_split ds_m(.in(min), .out1(m1), .out0(m0));
-	digit_split ds_s(.in(sec), .out1(s1), .out0(s0));
+	digit_split ds_h(.in(hour), .clk(clk), .out1(h1), .out0(h0));
+	digit_split ds_m(.in(min), .clk(clk), .out1(m1), .out0(m0));
+	digit_split ds_s(.in(sec), .clk(clk), .out1(s1), .out0(s0));
 	
 	bcd2seven bs_h1(.in({0, h1}), .out(out[47:40]));
 	bcd2seven bs_h0(.in({0, h0}), .out(out[39:32]));

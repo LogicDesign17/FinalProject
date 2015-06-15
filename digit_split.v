@@ -20,13 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 module digit_split(
 	input [6:0] in,
+	input clk,
 	output [3:0] out1, out0
 	);
 	
 	reg [3:0] d1, d0;
 	assign out1 = d1, out0 = d0;
 	
-	always @(in) begin
+	always @(posedge clk) begin
 		if (in >= 90) begin d1 = 9; d0 = in - 90; end
 		else if (in >= 80) begin d1 = 8; d0 = in - 80; end
 		else if (in >= 70) begin d1 = 7; d0 = in - 70; end

@@ -152,8 +152,8 @@ module alarm(
 		end
 	end
 	
-	digit_split ds_h(.in(alm_h), .out1(h1), .out0(h0));
-	digit_split ds_m(.in(alm_m), .out1(m1), .out0(m0));
+	digit_split ds_h(.in(alm_h), .clk(clk), .out1(h1), .out0(h0));
+	digit_split ds_m(.in(alm_m), .clk(clk), .out1(m1), .out0(m0));
 	
 	bcd2seven bs_h1(.in({0, h1}), .out(out[47:40]));
 	bcd2seven bs_h0(.in({0, h0}), .out(out[39:32]));

@@ -16,7 +16,7 @@ module date(
 	output reg [6:0] year,
 	output reg [6:0] month,
 	output reg [6:0] day
-);
+	);
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
 	wire [29:0] bcd;
@@ -35,22 +35,25 @@ module date(
 	assign bcd[24] = vcc;
 	assign bcd[29] = gnd;
 	
-	day_of_month dm(.year(year), .month(month), .out(day_num));
+	day_of_month dm(.year(year), .month(month), .clk(clk), .out(day_num));
 
 	always @(posedge clk) begin
 		if (reset) begin
 			up_f <= 0; down_f <= 0;
 			left_f <= 0; right_f <= 0;
 			enter_f <= 0; esc_f <= 0;
-			carry_f = 0;
+			carry_f = 0; blk <= 0;
+			norm <= 1; year <= 15;
+			month <= 1; day <= 1;
 		end
+		
 		
 		// Foreground
 		if (mode) begin
 			// At norm state
 			if (norm) begin
 				// ENTER
-				if (enter && !enter_f) begin
+				if (enter & !enter_f) begin
 					enter_f <= 1'b1;
 					norm <= 0;
 					blk <= 6'b110000;
@@ -59,30 +62,32 @@ module date(
 			end
 			// At setting
 			else begin
+				if (!esc) esc_f <= 1'b0;
+				if (!left) left_f <= 1'b0;
+				if (!right) right_f <= 1'b0;
+				if (!up) up_f <= 1'b0;
+				if (!down) down_f <= 1'b0;
 				// ESC
-				if (esc && !esc_f) begin
+				if (esc & !esc_f) begin
 					esc_f <= 1'b1;
 					norm <= 1;
 					blk <= 6'b000000;
 				end
-				else if (!esc) esc_f <= 1'b0;
 				
 				// LEFT
-				if (left && !left_f) begin
+				else if (left & !left_f) begin
 					left_f <= 1'b1;
 					blk <= {blk[3:0], blk[5:4]};
 				end
-				else if (!left) left_f <= 1'b0;
 				
 				// Right
-				if (right && !right_f) begin
+				else if (right & !right_f) begin
 					right_f <= 1'b1;
 					blk <= {blk[1:0], blk[5:2]};
 				end
-				else if (!right) right_f <= 1'b0;
 				
 				// UP
-				if (up && !up_f) begin
+				else if (up & !up_f) begin
 					up_f <= 1'b1;
 					case (blk)
 						6'b110000: begin
@@ -100,10 +105,9 @@ module date(
 						end
 					endcase
 				end
-				else if (!up) up_f <= 1'b0;
 				
 				// DOWN
-				if (down && !down_f) begin
+				else if (down & !down_f) begin
 					down_f <= 1'b1;
 					case (blk)
 						6'b110000: begin
@@ -113,6 +117,7 @@ module date(
 						6'b001100: begin
 							if (month == 1) month <= 12;
 							else month <= month - 1;
+							if (day_num < day) day <= day_num;
 						end
 						6'b000011: begin
 							if (day == 1) day <= day_num;
@@ -120,14 +125,13 @@ module date(
 						end
 					endcase
 				end
-				else if (!down) down_f <= 1'b0;
 			end
 		end
 		else norm <= 1;
 		
 		// Background
 		if (norm) begin
-			if (carry_in && !carry_f) begin
+			if (carry_in & !carry_f) begin
 				carry_f = 1;
 				if (day == day_num) begin
 					day <= 1;
@@ -144,9 +148,10 @@ module date(
 		end
 	end
 	
-	digit_split ds_h(.in(year), .out1(bcd[28:25]), .out0(bcd[23:20]));
-	digit_split ds_m(.in(month), .out1(bcd[18:15]), .out0(bcd[13:10]));
-	digit_split ds_s(.in(day), .out1(bcd[8:5]), .out0(bcd[3:0]));
+	digit_split ds_h(.in(year), .clk(clk), .out1(bcd[28:25]), .out0(bcd[23:20]));
+	digit_split ds_m(.in(month), .clk(clk), .out1(bcd[18:15]), .out0(bcd[13:10]));
+	digit_split ds_s(.in(day), .clk(clk), .out1(bcd[8:5]), .out0(bcd[3:0]));
 
-	bcd2seven bs[0:5] (.in(bcd), .out(out));	
+	bcd2seven bs [5:0] (.in(bcd), .out(out));
+	
 endmodule

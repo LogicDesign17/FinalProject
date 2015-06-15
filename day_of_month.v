@@ -21,11 +21,12 @@
 module day_of_month(
 	input [6:0] year,
 	input [6:0] month,
+	input clk,
 	output reg [4:0] out
 	);
 	
 	
-	always @(year or month) begin
+	always @(posedge clk) begin
 		case(month)
 			1, 3, 5, 7, 8, 10, 12: out = 31;
 			4, 6, 9, 11: out = 30;

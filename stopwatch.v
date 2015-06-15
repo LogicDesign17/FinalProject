@@ -138,9 +138,9 @@ module stopwatch(
 		end
 	end
 	
-	digit_split sw_min_split(.in(sw_min), .out1(sw_out[5]), .out0(sw_out[4]));
-	digit_split sw_sec1_split(.in(sw_sec1), .out1(sw_out[3]), .out0(sw_out[2]));
-	digit_split sw_sec0_split(.in(sw_sec0), .out1(sw_out[1]), .out0(sw_out[0]));
+	digit_split sw_min_split(.in(sw_min), .clk(clk), .out1(sw_out[5]), .out0(sw_out[4]));
+	digit_split sw_sec1_split(.in(sw_sec1), .clk(clk), .out1(sw_out[3]), .out0(sw_out[2]));
+	digit_split sw_sec0_split(.in(sw_sec0), .clk(clk), .out1(sw_out[1]), .out0(sw_out[0]));
 
 	bcd2seven sw_out_m0 (.in(sw_out_w[0]),.out(out_a_w[0]));
 	bcd2seven sw_out_m1 (.in(sw_out_w[1]),.out(out_a_w[1]));

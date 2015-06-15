@@ -33,7 +33,6 @@ module watch(
 
 	initial begin
 		mode = 4'b0001;
-		$monitor("mode: %b, norm: %b", mode, norm);
 	end
 	
 	always @(negedge clk) begin
@@ -47,9 +46,8 @@ module watch(
 	
 	always @(posedge clk) begin
 		// test
-		alm = reset;
 		if (reset) begin
-			mode <= 3'b001;
+			mode <= 4'b0001;
 			alm = 0;
 		end
 		else begin
@@ -136,9 +134,10 @@ module watch(
 		.right(right),
 		.enter(enter),
 		.esc(esc),
-		.clk(clk2),
+		.clk(clk),
 		.mode(mode[0]),
 		.carry_in(carry),
+		.reset(reset),
 		
 		.out(out_w[0]),
 		.blk(blk[0]),
@@ -211,7 +210,7 @@ module watch(
 		.right(right),
 		.enter(enter),
 		.esc(esc),
-		.clk(clk2),
+		.clk(clk),
 		.mode(mode[4]),
 		
 		.out(out_w[4]),
@@ -229,7 +228,7 @@ module watch(
 		.year(year),
 		.month(month),
 		.day(day),
-		.clk(clk2),
+		.clk(clk),
 		.mode(mode[5]),
 		
 		.out(out_w[5]),
