@@ -13,7 +13,7 @@
         <GUIConfig name="UserDefineDlg" position="undocked">hide</GUIConfig>
         <GUIConfig name="TabSetting" size="4" replaceBySpace="no" />
         <!--App position-->
-        <GUIConfig name="AppPosition" x="30" y="27" width="955" height="659" isMaximized="no" />
+        <GUIConfig name="AppPosition" x="30" y="27" width="955" height="659" isMaximized="yes" />
         <!-- For the primary scintilla view,
              2 status for Attribut lineNumberMargin, bookMarkMargin, indentGuideLine and currentLineHilitingShow: "show" or "hide"
              4 status for Attribut folderMarkStyle : "simple", "arrow", "circle" and "box"  -->
@@ -86,7 +86,7 @@
         <GUIConfig name="ScintillaGlobalSettings" enableMultiSelection="no" />
         <GUIConfig name="openSaveDir" value="0" defaultDirPath="" />
         <GUIConfig name="titleBar" short="no" />
-        <GUIConfig name="stylerTheme" path="C:\Users\cse\Desktop\FinalProject\notepad++\stylers.xml" />
+        <GUIConfig name="stylerTheme" path="D:\team17\Watch\notepad++\stylers.xml" />
         <GUIConfig name="delimiterSelection" leftmostDelimiter="40" rightmostDelimiter="41" delimiterSelectionOnEntireDocument="no" />
         <GUIConfig name="MISC" fileSwitcherWithoutExtColumn="no" backSlashIsEscapeCharacterForSql="yes" />
         <GUIConfig name="DockingManager" leftWidth="200" rightWidth="200" topHeight="200" bottomHeight="200">
@@ -98,12 +98,33 @@
     </GUIConfigs>
     <!-- The History of opened files list -->
     <FindHistory nbMaxFindHistoryPath="10" nbMaxFindHistoryFilter="10" nbMaxFindHistoryFind="10" nbMaxFindHistoryReplace="10" matchWord="no" matchCase="no" wrap="yes" directionDown="yes" fifRecuisive="yes" fifInHiddenFolder="no" dlgAlwaysVisible="no" fifFilterFollowsDoc="no" fifFolderFollowsDoc="no" searchMode="0" transparencyMode="1" transparency="150" dotMatchesNewline="no">
+        <Find name="alarm_w" />
+        <Find name="year" />
+        <Find name="month" />
+        <Find name="gnd" />
+        <Find name="raw" />
+        <Find name="num" />
+        <Find name="sec" />
+        <Find name="min" />
+        <Find name="hour" />
         <Find name="blink" />
-        <Replace name="blk" />
+        <Replace name="alm_w" />
+        <Replace name="d_y" />
+        <Replace name="d_m" />
+        <Replace name="vcc" />
+        <Replace name="seven" />
+        <Replace name="out" />
+        <Replace name="day" />
+        <Replace name="month" />
+        <Replace name="year" />
+        <Replace name="alm_s" />
     </FindHistory>
     <History nbMaxFile="15" inSubMenu="no" customLength="-1">
         <File filename="D:\team17\Watch\stopwatch.v" />
-        <File filename="C:\Users\cse\Desktop\FinalProject\watch.v" />
+        <File filename="D:\team17\Watch\d_day.v" />
+        <File filename="D:\team17\Watch\date.v" />
+        <File filename="D:\team17\Watch\alarm.v" />
+        <File filename="D:\team17\Watch\readback.mcs" />
     </History>
     <ProjectPanels>
         <ProjectPanel id="0" workSpaceFile="" />

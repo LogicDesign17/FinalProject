@@ -21,8 +21,10 @@ module clock(
 	reg [47:0] blk_on;
 	reg [19:0] count;
 	wire [3:0] h1, h0, m1, m0, s1, s0;
-	wire [47:0] raw;
 	integer i, j;
+	wire norm_w;
+	
+	assign norm_w = 1;
 	
 	initial begin
 		up_f = 0; down_f = 0;
@@ -32,10 +34,10 @@ module clock(
 		count = 0;
 		hour = 0; min = 0; sec = 0;
 		carry_out = 0;
-		norm = 1;
 	end
 	
 	always @(posedge clk) begin
+		norm <= norm_w;
 		// Foreground
 		if (mode) begin
 			// At norm state
@@ -52,27 +54,30 @@ module clock(
 			end
 			// At setting
 			else begin
+				if (!esc) esc_f <= 1'b0;
+				else if (!left) left_f <= 1'b0;
+				else if (!right) right_f <= 1'b0;
+				else if (!up) up_f <= 1'b0;
+				else if (!down) down_f <= 1'b0;
+				
 				// ESC
 				if (esc && !esc_f) begin
 					esc_f <= 1'b1;
 					norm <= 1;
 					blk <= 6'b000000;
 				end
-				else if (!esc) esc_f <= 1'b0;
 				
 				// LEFT
-				if (left && !left_f) begin
+				else if (left && !left_f) begin
 					left_f <= 1'b1;
 					blk <= {blk[3:0], blk[5:4]};
 				end
-				else if (!left) left_f <= 1'b0;
 				
 				// Right
-				if (right && !right_f) begin
+				else if (right && !right_f) begin
 					right_f <= 1'b1;
 					blk <= {blk[1:0], blk[5:2]};
 				end
-				else if (!right) right_f <= 1'b0;
 				
 				// UP
 				if (up && !up_f) begin
@@ -92,7 +97,6 @@ module clock(
 						end
 					endcase
 				end
-				else if (!up) up_f <= 1'b0;
 				
 				// DOWN
 				if (down && !down_f) begin
@@ -112,16 +116,14 @@ module clock(
 						end
 					endcase
 				end
-				else if (!down) down_f <= 1'b0;
-				
 			end
 		end
 		else norm <= 1;
 		
 		// Background
 		if (norm) begin
-			if (count == 999) begin
-				count <= 0;
+			if (count == 1000000) begin
+				count <= 1;
 				if (sec == 59) begin
 					sec <= 0;
 					if (min == 59) begin

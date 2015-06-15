@@ -153,8 +153,8 @@ module timer(
 		
 		// Background
 		if (norm && active && (hour | min | sec)) begin
-			if (count == 999) begin
-				count <= 0;
+			if (count == 100) begin
+				count <= 1;
 				if (sec == 0) begin
 					if (min == 0) begin
 						if (hour == 0) begin
