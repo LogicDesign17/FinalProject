@@ -8,6 +8,8 @@ module clock(
 	input esc,
 	input clk,
 	input mode,
+	input reset,
+	
 	output [47:0] out,
 	output reg [5:0] blk,
 	output reg norm,
@@ -18,13 +20,9 @@ module clock(
 	);
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
-	reg [47:0] blk_on;
 	reg [19:0] count;
 	wire [3:0] h1, h0, m1, m0, s1, s0;
 	integer i, j;
-	wire norm_w;
-	
-	assign norm_w = 1;
 	
 	initial begin
 		up_f = 0; down_f = 0;
@@ -37,117 +35,116 @@ module clock(
 	end
 	
 	always @(posedge clk) begin
-		norm <= norm_w;
-		// Foreground
-		if (mode) begin
-			// At norm state
-			if (norm) begin
-				// ENTER
-				if (enter && !enter_f) begin
-					enter_f <= 1'b1;
-					norm <= 0;
-					blk <= 6'b110000;
-				end
-				else if (!enter) begin
-					enter_f <= 1'b0;
-				end
-			end
-			// At setting
-			else begin
-				if (!esc) esc_f <= 1'b0;
-				else if (!left) left_f <= 1'b0;
-				else if (!right) right_f <= 1'b0;
-				else if (!up) up_f <= 1'b0;
-				else if (!down) down_f <= 1'b0;
-				
-				// ESC
-				if (esc && !esc_f) begin
-					esc_f <= 1'b1;
-					norm <= 1;
-					blk <= 6'b000000;
-				end
-				
-				// LEFT
-				else if (left && !left_f) begin
-					left_f <= 1'b1;
-					blk <= {blk[3:0], blk[5:4]};
-				end
-				
-				// Right
-				else if (right && !right_f) begin
-					right_f <= 1'b1;
-					blk <= {blk[1:0], blk[5:2]};
-				end
-				
-				// UP
-				if (up && !up_f) begin
-					up_f <= 1'b1;
-					case (blk)
-						6'b110000: begin
-							if (hour == 23) hour <= 0;
-							else hour <= hour + 1;
-						end
-						6'b001100: begin
-							if (min == 59) min <= 0;
-							else min <= min + 1;
-						end
-						6'b000011: begin
-							if (sec == 59) sec <= 0;
-							else sec <= sec + 1;
-						end
-					endcase
-				end
-				
-				// DOWN
-				if (down && !down_f) begin
-					down_f <= 1'b1;
-					case (blk)
-						6'b110000: begin
-							if (hour == 0) hour <= 23;
-							else hour <= hour - 1;
-						end
-						6'b001100: begin
-							if (min == 0) min <= 59;
-							else min <= min - 1;
-						end
-						6'b000011: begin
-							if (sec == 0) sec <= 59;
-							else sec <= sec - 1;
-						end
-					endcase
-				end
-			end
+		if (reset) begin
+			blk <= 0; norm <= 1;
+			hour <= 0; min <= 0; sec <= 0;
+			carry_out <= 0;
 		end
-		else norm <= 1;
-		
-		// Background
-		if (norm) begin
-			if (count == 1000000) begin
-				count <= 1;
-				if (sec == 59) begin
-					sec <= 0;
-					if (min == 59) begin
-						min <= 0;
-						if (hour == 23) begin
-							hour <= 0;
-							carry_out <= 1'b1;
-						end
-						else begin
-							hour <= hour + 1;
-							carry_out <= 1'b0;
-						end
+		else begin
+			// Foreground
+			if (mode) begin
+				// At norm state
+				if (norm) begin
+					// ENTER
+					if (enter && !enter_f) begin
+						enter_f <= 1'b1;
+						norm <= 0;
+						blk <= 6'b110000;
 					end
-					else min <= min + 1;
+					else if (!enter) begin
+						enter_f <= 1'b0;
+					end
 				end
-				else sec <= sec + 1;
+				// At setting
+				else begin
+					if (!esc) esc_f <= 1'b0;
+					if (!left) left_f <= 1'b0;
+					if (!right) right_f <= 1'b0;
+					if (!up) up_f <= 1'b0;
+					if (!down) down_f <= 1'b0;
+					
+					// ESC
+					if (esc && !esc_f) begin
+						esc_f <= 1'b1;
+						norm <= 1;
+						blk <= 6'b000000;
+					end
+					
+					// LEFT
+					else if (left && !left_f) begin
+						left_f <= 1'b1;
+						blk <= {blk[3:0], blk[5:4]};
+					end
+					
+					// Right
+					else if (right && !right_f) begin
+						right_f <= 1'b1;
+						blk <= {blk[1:0], blk[5:2]};
+					end
+					
+					// UP
+					if (up && !up_f) begin
+						up_f <= 1'b1;
+						case (blk)
+							6'b110000: begin
+								if (hour == 23) hour <= 0;
+								else hour <= hour + 1;
+							end
+							6'b001100: begin
+								if (min == 59) min <= 0;
+								else min <= min + 1;
+							end
+							6'b000011: begin
+								if (sec == 59) sec <= 0;
+								else sec <= sec + 1;
+							end
+						endcase
+					end
+					
+					// DOWN
+					if (down && !down_f) begin
+						down_f <= 1'b1;
+						case (blk)
+							6'b110000: begin
+								if (hour == 0) hour <= 23;
+								else hour <= hour - 1;
+							end
+							6'b001100: begin
+								if (min == 0) min <= 59;
+								else min <= min - 1;
+							end
+							6'b000011: begin
+								if (sec == 0) sec <= 59;
+								else sec <= sec - 1;
+							end
+						endcase
+					end
+				end
 			end
-			else count <= count + 1;
-		end
-		
-		// Output formatting
-		for (i = 0; i < 6; i = i + 1) begin
-			for (j = 0; j < 8; j = j + 1) begin
-				blk_on[8*i+j] = blk[i];
+			else norm <= 1;
+			
+			// Background
+			if (norm) begin
+				if (count == 1000000) begin
+					count <= 1;
+					if (sec == 59) begin
+						sec <= 0;
+						if (min == 59) begin
+							min <= 0;
+							if (hour == 23) begin
+								hour <= 0;
+								carry_out <= 1'b1;
+							end
+							else begin
+								hour <= hour + 1;
+								carry_out <= 1'b0;
+							end
+						end
+						else min <= min + 1;
+					end
+					else sec <= sec + 1;
+				end
+				else count <= count + 1;
 			end
 		end
 	end

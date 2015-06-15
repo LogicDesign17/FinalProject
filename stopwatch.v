@@ -27,6 +27,8 @@ module stopwatch(
 	input esc,
 	input clk,
 	input mode,
+	input reset,
+	
 	output [47:0] out,
 	output reg [5:0] blk = 6'b000000,
 	output norm
@@ -84,11 +86,15 @@ module stopwatch(
 		norm_r = 1;
 		enter_mark = 0;
 		esc_mark = 0;
-		norm_r = 1;
 	end
 	
 	// Stopwatch
 	always @(posedge clk) begin
+		if (reset) begin
+			blk = 0;
+			sw_count = 0; sw_min = 0; sw_sec1 = 0; sw_sec0 = 0;
+			sw_pause = 0;
+		end
 		if(mode) begin
 			if(!enter) enter_mark = 0;
 			if(!esc) esc_mark = 0;

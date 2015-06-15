@@ -9,6 +9,7 @@ module watch_test;
 	reg enter_i;
 	reg esc_i;
 	reg clk;
+	reg reset;
 
 	// Outputs
 	wire [7:0] out_m;
@@ -26,7 +27,8 @@ module watch_test;
 		.clk(clk), 
 		.out_m(out_m), 
 		.out(out), 
-		.alm(alm)
+		.alm(alm),
+		.reset(reset)
 	);
 	
 	initial begin
@@ -38,9 +40,11 @@ module watch_test;
 		enter_i = 1;
 		esc_i = 1;
 		clk = 1;
+		reset = 0;
 
 		// #1000 == 1 sec
 		// Clock test
+		#1000 reset = 1; #200 reset = 0;
 		#1000 enter_i = 0; #200 enter_i = 1;
 		#200 up_i = 0; #200 up_i = 1;
 		#2000
@@ -63,10 +67,11 @@ module watch_test;
 		#200 up_i = 0; #200 up_i = 1;
 		#200 up_i = 0; #200 up_i = 1;
 		#200 up_i = 0; #200 up_i = 1;
-		#200 esc_i = 0; #200 esc_i = 1;
-		#200 right_i = 0; #200 right_i = 1;
+		#2000 esc_i = 0; #200 esc_i = 1;
+		#2000 right_i = 0; #200 right_i = 1;
 		//#90000 esc_i = 0; #200 esc_i = 1; // stop alarm
 		#10000 down_i = 0; #200 down_i = 1;
+		#50000 reset = 1; #200 reset = 0;
 	end
 	
 	always #0.5 clk = ~clk;

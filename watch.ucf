@@ -65,3 +65,4 @@ NET "out[45]" LOC = P134;
 NET "out[46]" LOC = P135;
 NET "out[47]" LOC = P138;
 NET "clk" LOC = P60;
+NET "reset" LOC = P87;
