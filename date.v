@@ -9,6 +9,7 @@ module date(
 	input clk,
 	input mode,
 	input carry_in,
+	input reset,
 	output [47:0] out,
 	output reg [5:0] blk,
 	output reg norm,
@@ -19,24 +20,31 @@ module date(
 
 	reg up_f, down_f, left_f, right_f, enter_f, esc_f;
 	wire [29:0] bcd;
-	wire [47:0] seven;
 	reg carry_f;
-	wire day_num;
+	wire [4:0] day_num;
 	
 	integer i, j;
 	
 	supply1 vcc;
+	supply0 gnd;
 	
 	assign bcd[4] = vcc;
-	assign bcd[9] = vcc;
+	assign bcd[9] = gnd;
 	assign bcd[14] = vcc;
-	assign bcd[19] = vcc;
+	assign bcd[19] = gnd;
 	assign bcd[24] = vcc;
-	assign bcd[29] = vcc;
+	assign bcd[29] = gnd;
 	
 	day_of_month dm(.year(year), .month(month), .out(day_num));
 
 	always @(posedge clk) begin
+		if (reset) begin
+			up_f <= 0; down_f <= 0;
+			left_f <= 0; right_f <= 0;
+			enter_f <= 0; esc_f <= 0;
+			carry_f = 0;
+		end
+		
 		// Foreground
 		if (mode) begin
 			// At norm state
